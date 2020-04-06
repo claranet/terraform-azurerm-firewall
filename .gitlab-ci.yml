@@ -1,0 +1,24 @@
+image:
+  name: hashicorp/terraform:0.11.13
+
+stages:
+  - validate
+
+tffmt:
+  stage: validate
+  tags:
+    - default
+  script:
+    - terraform fmt -write=false -diff -check
+
+tfvalidate:
+  stage: validate
+  tags:
+    - default
+  script:
+    - mv main.tf.ci main.tf
+    - mv terraform.tfvars.ci terraform.tfvars
+    - git config --global credential.helper store
+    - echo "https://gitlab-ci-token:${CI_JOB_TOKEN}@git.fr.clara.net" > "${HOME}/.git-credentials"
+    - terraform init
+    - terraform validate
