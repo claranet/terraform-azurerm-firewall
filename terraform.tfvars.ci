@@ -1,0 +1,42 @@
+location="fr-central"
+location_short="frc"
+client_name="test"
+environment="test"
+stack="ci"
+resource_group_name="rg-test"
+virtual_network_name="vnet-test"
+subnet_cidr="10.10.0.0/24"
+
+extra_tags = {
+  foo = "bar"
+}
+
+network_rules          = [
+  {   
+    name = "netrule1"
+    source_addresses = ["10.0.0.0/16"]
+    destination_ports = ["53"]
+    destination_addresses = ["8.8.8.8","8.8.4.4"]
+    protocols = ["TCP","UDP"]
+  }
+]
+application_rules      = [
+  {
+    name = "apprule1"
+    description   = "Optional rule"
+    source_addresses = ["10.0.0.0/16"]
+    #Either use fqdn_tags, either use target_fqdns + protocol :
+    #fqdn_tags  = ["AzureBackup"] 
+    target_fqdns  = ["fqdn1","fqdn2"]
+    protocol = [
+      {
+        port        = "443"
+        type        = "Https"
+      }
+    ]
+  }
+]
+
+network_rule_collection_action        = "Allow"
+
+app_rule_collection_action    = "Allow"
