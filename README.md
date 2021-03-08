@@ -1,182 +1,207 @@
-# Azure Firewall
+# Azure Resource Group
+[![Changelog](https://img.shields.io/badge/changelog-release-green.svg)](CHANGELOG.md) [![Notice](https://img.shields.io/badge/notice-copyright-yellow.svg)](NOTICE) [![Apache V2 License](https://img.shields.io/badge/license-Apache%20V2-orange.svg)](LICENSE) [![TF Registry](https://img.shields.io/badge/terraform-registry-blue.svg)](https://registry.terraform.io/modules/claranet/firewall/azurerm/)
 
-Common Azure module to generate a firewall attached to a vnet.
+Common Azure module to generate a firewall and its subnet.
+
+## Version compatibility
+
+| Module version | Terraform version | AzureRM version |
+|----------------|-------------------| --------------- |
+| >= 4.x.x       | 0.13.x            | >= 2.0          |
+| >= 3.x.x       | 0.12.x            | >= 2.0          |
+| >= 2.x.x       | 0.12.x            | < 2.0           |
+| <  2.x.x       | 0.11.x            | < 2.0           |
+
+## Usage
+
+This module is optimized to work with the [Claranet terraform-wrapper](https://github.com/claranet/terraform-wrapper) tool
+which set some terraform variables in the environment needed by this module.
+More details about variables set by the `terraform-wrapper` available in the [documentation](https://github.com/claranet/terraform-wrapper#environment).
 
 ## Usage
 
 ```shell
 module "azure-region" {
-  source       = "git::ssh://git@git.fr.clara.net/claranet/cloudnative/projects/cloud/azure/terraform/modules/regions.git?ref=x.x.x"
-  azure_region = "${var.location}"
+  source       = "claranet/region/azurerm"
+  version      = "x.x.x"
+  azure_region = var.location
 }
 
 module "rg" {
-  source      = "git::ssh://git@git.fr.clara.net/claranet/cloudnative/projects/cloud/azure/terraform/modules/rg.git?ref=x.x.x"
-  location    = "${module.azure-region.location}"
-  client_name = "${var.client_name}"
-  environment = "${var.environment}"
-  stack       = "${var.stack}"
+  source      = "claranet/rg/azurerm"
+  version     = "x.x.x"
+  location    = module.azure-region.location
+  client_name = var.client_name
+  environment = var.environment
+  stack       = var.stack
 }
 
 module "vnet" {
-  source              = "git::ssh://git@git.fr.clara.net/claranet/cloudnative/projects/cloud/azure/terraform/modules/vnet.git?ref=x.x.x"
-  environment         = "${var.environment}"
-  location            = "${module.azure-region.location}"
-  location_short      = "${module.azure-region.location_short}"
-  client_name         = "${var.client_name}"
-  stack               = "${var.stack}"
-  resource_group_name = "${module.rg.resource_group_name}"
-  vnet_cidr           = "${var.vnet_cidr}"
+  source  = "claranet/vnet/azurerm"
+  version = "x.x.x"
+
+  environment         = var.environment
+  location            = module.azure-region.location
+  location_short      = module.azure-region.location_short
+  client_name         = var.client_name
+  stack               = var.stack
+  resource_group_name = module.rg.resource_group_name
+  vnet_cidr           = var.vnet_cidr
 }
 
 module "azure-firewall" {
-  source				= "git::ssh://git@git.fr.clara.net/claranet/cloudnative/projects/cloud/azure/terraform/modules/firewall.git?ref=x.x.x"
-  location				= "${module.azure-region.location}"
-  location_short			= "${module.azure-region.location_short}"
-  client_name				= "${var.client_name}"
-  environment				= "${var.environment}"
-  stack					= "${var.stack}"
-  resource_group_name			= "${module.rg.resource_group_name}"
-  enabled				= "true"
-  virtual_network_name			= "${module.vnet.virtual_network_name}"
-  subnet_cidr				= "${var.subnet_cidr}"
+  source               = "claranet/firewall/azurerm"
+  location             = module.azure-region.location
+  location_short       = module.azure-region.location_short
+  client_name          = var.client_name
+  environment          = var.environment
+  stack                = var.stack
+  resource_group_name  = module.rg.resource_group_name
+  virtual_network_name = module.vnet.virtual_network_name
+  subnet_cidr          = var.subnet_cidr
 
-  add_network_rules			= "true"
-  network_rule_collection_action	= "Allow"
-  network_rules				= [
+  network_rule_collections = [
     {
-      name = "netrule1"
-      source_addresses = ["10.0.0.0/16"]
-      destination_ports = ["53"]
-      destination_addresses = ["8.8.8.8","8.8.4.4"]
-      protocols = ["TCP","UDP"]
-    }
-  ]
-
-  add_app_rules				= "true"
-  app_rule_collection_action		= "Allow"
-  application_rules			= [
-    {
-      name = "apprule1"
-      description   = "Optional rule"
-      source_addresses = ["10.0.0.0/16"]
-      #Either use fqdn_tags, either use target_fqdns + protocol :
-      #fqdn_tags  = ["AzureBackup"]
-      target_fqdns  = ["fqdn1","fqdn2"]
-      protocol = [
+      name     = "RuleCollection1"
+      priority = 100
+      action   = "Allow"
+      rules = [
         {
-          port        = "443"
-          type        = "Https"
+          name                  = "AllowSSH"
+          source_addresses      = ["10.1.0.0/24"]
+          destination_ports     = ["22"]
+          destination_addresses = ["10.2.0.0/24"]
+          protocols             = ["TCP"]
+        },
+        {
+          name                  = "AllowRDP"
+          source_addresses      = ["10.1.0.0/24"]
+          destination_ports     = ["3389"]
+          destination_addresses = ["10.3.0.0/24"]
+          protocols             = ["TCP"]
         }
       ]
     }
   ]
 
-  add_nat_rules				= "true"
-  nat_rule_collection_action		= ["Dnat"]
-  nat_rules				= [
+  application_rule_collections = [
     {
-      name = "natrule1"
-      source_addresses = ["0.0.0.0/0"]
-      destination_ports = ["3389"]
-      destination_addresses = ["40.66.60.141"]	#Use the firewall public address.
-      protocols = ["TCP"]
-      translated_address = "10.10.1.2"
-      translated_port = "3389"
+      name     = "AppRuleCollection1"
+      priority = 101
+      action   = "Allow"
+      rules = [
+        {
+          name             = "AllowGoogle"
+          source_addresses = ["10.0.0.0/16"]
+          target_fqdns     = ["*.google.com", "*.google.fr"]
+          protocols = [
+            {
+              port = "443"
+              type = "Https"
+            },
+            {
+              port = "80"
+              type = "Http"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+  nat_rule_collections = [
+    {
+      name     = "NatRuleCollection1"
+      priority = 100
+      action   = "Dnat"
+      rules = [
+        {
+          name                  = "RedirectWeb"
+          source_addresses      = ["*"]
+          destination_ports     = ["80", "443"]
+          destination_addresses = ["x.x.x.x"] # Firewall public IP Address
+          translated_port       = 80
+          translated_address    = "10.0.0.1"
+          protocols             = ["TCP", "UDP"]
+        }
+      ]
     }
   ]
 
-  enable_logs_to_storage  = "true"
-  logs_storage_account_id = "${var.logs_storage_account_id}"
+  logs_destination_ids = [
+    data.terraform_remote_state.run.outputs.logs_storage_account_id,
+    data.terraform_remote_state.run.outputs.log_analytics_workspace_id
 
-  enable_logs_to_log_analytics    = "true"
-  logs_log_analytics_workspace_id = "${var.log_analytics_id}"
-
-  enable_logs_to_eventhub = "true"
-  logs_eventhub_workspace_name = "${var.logs_eventhub_workspace_name}"
-  logs_eventhub_authorization_rule_id = "${var.logs_eventhub_authorization_rule_id}"
- 
-
+  ]
 }
-
 ```
+
 Example: To configure another subnet to use the firewall for outgoing traffic, add the following resources:
 ```shell
-resource "azurerm_route_table" "workload_route_table" {
-  name                          = "default_route_table"
-  location                      = "${module.azure-region.location}"
-  resource_group_name           = "${module.rg.resource_group_name}"
 
-  route {
-    name                        = "fw-dg"
-    address_prefix              = "0.0.0.0/0"
-    next_hop_type               = "VirtualAppliance"
-    next_hop_in_ip_address      = "${module.azure-firewall.private_ip_address[0]}"
-  }
 
-  tags = "${local.default_tags}"
+module "azure-network-route-table" {
+  source  = "claranet/route-table/azurerm"
+  version = "x.x.x"
+
+  client_name         = var.client_name
+  environment         = var.environment
+  stack               = var.stack
+  resource_group_name = module.rg.resource_group_name
+  location            = module.azure-region.location
+  location_short      = module.azure-region.location_short
+  
+  tags                = local.default_tags
+}
+
+resource "azurerm_route" "custom-route" {
+  name                   = "DefaultRouteToFw"
+  resource_group_name    = module.rg.resource_group_name
+  route_table_name       = module.azure-network-route-table.route_table_name
+  address_prefix         = "0.0.0.0/0"
+  next_hop_type          = "VirtualAppliance"
+  next_hop_in_ip_address = module.azure-firewall.private_ip_address[0]
 }
 
 module "azure-workload-subnet" {
-  source               = "git::https://git.fr.clara.net/claranet/cloudnative/projects/cloud/azure/terraform/modules/subnet.git?ref=az-95-fix-routes-and-nsg-count"
-  environment          = "${local.environment}"
-  location_short       = "${module.azure-region.location_short}"
-  client_name          = "${local.client_name}"
-  stack                = "${local.stack}"
+  source               = "claranet/subnet/azurerm"
+  version              = "x.x.x"
+  
+  environment          = local.environment
+  location_short       = module.azure-region.location_short
+  client_name          = local.client_name
+  stack                = local.stack
   custom_subnet_names  = ["workload_subnet"]
-  resource_group_name  = "${module.rg.resource_group_name}"
-  virtual_network_name = "${module.vnet.virtual_network_name}"
+  resource_group_name  = module.rg.resource_group_name
+  virtual_network_name = module.vnet.virtual_network_name
   subnet_cidr_list     = ["10.10.1.0/24"]
 
-  # This list must be the same size as `subnet_cidr_list` or not set
-  route_table_count    = "1"
-  route_table_ids      = ["${azurerm_route_table.workload_route_table.id}"]
+  route_table_ids      = [module.azure-network-route-table.route_table_id]
 }
 
-resource "azurerm_subnet_route_table_association" "route_table_association" {
-  subnet_id      = "${module.azure-workload-subnet.subnet_ids[0]}"
-  route_table_id = "${azurerm_route_table.workload_route_table.id}"
-}
 ```
 ## Inputs
 
 | Name | Description | Type | Default | Required |
-|------|-------------|:----:|:-----:|:-----:|
-| add\_app\_rules | Add an Application Rule Collection within the Azure Firewall, or not. Set to true or false. | string | `"false"` | no |
-| add\_nat\_rules | Add an NAT Rule Collection within the Azure Firewall, or not. Set to true or false. | string | `"false"` | no |
-| add\_network\_rules | Add a Network Rule Collection within the Azure Firewall, or not. Set to true or false. | string | `"false"` | no |
-| app\_rule\_collection\_action | Specifies the action the rules will apply to matching traffic. Possible values are Allow and Deny. https://www.terraform.io/docs/providers/azurerm/r/firewall_application_rule_collection.html#action | string | `"Deny"` | no |
-| app\_rule\_collection\_name | Specifies the name of the Application Rule Collection which must be unique within the Firewall. Changing this forces a new resource to be created. | string | `"app_rule_collection1"` | no |
-| app\_rule\_collection\_priority | Specifies the priority of the application rule collection. Possible values are between 100 - 65000. https://www.terraform.io/docs/providers/azurerm/r/firewall_application_rule_collection.html#priority | string | `"100"` | no |
-| application\_rules | A list of application rule blocks. Format: https://www.terraform.io/docs/providers/azurerm/r/firewall_application_rule_collection.html#rule . About the fqdn_tags in app rules: https://docs.microsoft.com/en-us/azure/firewall/fqdn-tags | list | `<list>` | no |
-| client\_name | Client name/account used in naming | string | n/a | yes |
-| custom\_firewall\_name | Optional custom firewall name | string | `""` | no |
-| enable\_logs\_to\_eventhub | Boolean flag to specify whether the logs should be sent to EventHub | string | `"false"` | no |
-| enable\_logs\_to\_log\_analytics | Boolean flag to specify whether the logs should be sent to Log Analytics | string | `"false"` | no |
-| enable\_logs\_to\_storage | Boolean flag to specify whether the logs should be sent to the Storage Account | string | `"false"` | no |
-| enabled | Set to true or false to create or not the firewall | string | `"false"` | no |
-| environment | Project environment | string | n/a | yes |
-| extra\_tags | Extra tags to add | map | `<map>` | no |
-| ip\_configuration\_name | Name of the ip_configuration block. https://www.terraform.io/docs/providers/azurerm/r/firewall.html#ip_configuration | string | `"ip_configuration"` | no |
-| location | Azure region to use | string | n/a | yes |
-| location\_short | Short string for Azure location. | string | n/a | yes |
-| logs\_eventhub\_authorization\_rule\_id | Specifies the ID of an Event Hub Namespace Authorization Rule used to send Diagnostics Data. | string | `""` | no |
-| logs\_eventhub\_workspace\_name | Specifies the name of the Event Hub where Diagnostics Data should be sent. | string | `""` | no |
-| logs\_log\_analytics\_workspace\_id | Log Analytics Workspace id for logs | string | `""` | no |
-| logs\_storage\_account\_id | Storage Account id for logs | string | `""` | no |
-| logs\_storage\_retention | Retention in days for logs on Storage Account | string | `"30"` | no |
-| nat\_rule\_collection\_action | Specifies the action the rules will apply to matching traffic. Possible values are Dnat and Snat. https://www.terraform.io/docs/providers/azurerm/r/firewall_nat_rule_collection.html#action | string | `""` | no |
-| nat\_rule\_collection\_name | Specifies the name of the NAT Rule Collection which must be unique within the Firewall. Changing this forces a new resource to be created. | string | `"nat_rule_collection1"` | no |
-| nat\_rule\_collection\_priority | Specifies the priority of the NAT rule collection. Possible values are between 100 - 65000. https://www.terraform.io/docs/providers/azurerm/r/firewall_nat_rule_collection.html#priority | string | `"100"` | no |
-| nat\_rules | A list of NAT rule blocks. Format: https://www.terraform.io/docs/providers/azurerm/r/firewall_nat_rule_collection.html#rule | list | `<list>` | no |
-| network\_rule\_collection\_action | Specifies the action the rules will apply to matching traffic. Possible values are Allow and Deny. https://www.terraform.io/docs/providers/azurerm/r/firewall_network_rule_collection.html#action | string | `"Deny"` | no |
-| network\_rule\_collection\_name | Specifies the name of the Network Rule Collection which must be unique within the Firewall. Changing this forces a new resource to be created. | string | `"network_rule_collection1"` | no |
-| network\_rule\_collection\_priority | Specifies the priority of the rule collection. Possible values are between 100 - 65000. https://www.terraform.io/docs/providers/azurerm/r/firewall_network_rule_collection.html#priority | string | `"100"` | no |
-| network\_rules | A list of network rule blocks. Format: https://www.terraform.io/docs/providers/azurerm/r/firewall_network_rule_collection.html#rule | list | `<list>` | no |
-| resource\_group\_name | Resource group name | string | n/a | yes |
-| stack | Project stack name | string | n/a | yes |
-| subnet\_cidr | The address prefix to use for the firewall's subnet | string | n/a | yes |
-| virtual\_network\_name | Name of the vnet attached to the firewall. | string | n/a | yes |
+|------|-------------|------|---------|:--------:|
+| application\_rule\_collections | Create an application rule collection | <pre>list(object({<br>    name     = string,<br>    priority = number,<br>    action   = string,<br>    rules = list(object({<br>      name             = string,<br>      source_addresses = list(string),<br>      target_fqdns     = list(string),<br>      protocols = list(object({<br>        port = string,<br>        type = string<br>      }))<br>    }))<br>  }))</pre> | `null` | no |
+| client\_name | Client name/account used in naming | `string` | n/a | yes |
+| custom\_firewall\_name | Optional custom firewall name | `string` | `""` | no |
+| environment | Project environment | `string` | n/a | yes |
+| extra\_tags | Extra tags to add | `map(string)` | `{}` | no |
+| ip\_configuration\_name | Name of the ip\_configuration block. https://www.terraform.io/docs/providers/azurerm/r/firewall.html#ip_configuration | `string` | `"ip_configuration"` | no |
+| location | Azure region to use | `string` | n/a | yes |
+| location\_short | Short string for Azure location. | `string` | n/a | yes |
+| logs\_destination\_ids | List of IDs (storage, logAnalytics Workspace, EventHub) to push logs to. | `list(string)` | `null` | no |
+| logs\_logs\_categories | List of logs categories to log | `list(string)` | `null` | no |
+| logs\_metrics\_categories | List of metrics categories to log | `list(string)` | `null` | no |
+| logs\_retention\_days | Number of days to keep logs. | `number` | `32` | no |
+| nat\_rule\_collections | Create a Nat rule collection | <pre>object({<br>    name     = string,<br>    priority = number,<br>    action   = string,<br>    rules = list(object({<br>      name                  = string,<br>      source_addresses      = list(string),<br>      destination_port      = list(string),<br>      destination_addresses = list(string),<br>      tranlated_port        = number,<br>      translated_address    = string,<br>      protocols             = list(string)<br>    }))<br>  })</pre> | n/a | yes |
+| network\_rule\_collections | Create a network rule collection | <pre>list(object({<br>    name     = string,<br>    priority = number,<br>    action   = string,<br>    rules = list(object({<br>      name                  = string,<br>      source_addresses      = list(string),<br>      destinations_ports    = list(string),<br>      destination_addresses = list(string),<br>      protocols             = list(string)<br>    }))<br>  }))</pre> | `null` | no |
+| public\_ip\_custom\_name | Custom name for the public IP | `string` | `null` | no |
+| resource\_group\_name | Resource group name | `string` | n/a | yes |
+| stack | Project stack name | `string` | n/a | yes |
+| subnet\_cidr | The address prefix to use for the firewall's subnet | `string` | n/a | yes |
+| virtual\_network\_name | Name of the vnet attached to the firewall. | `string` | n/a | yes |
 
 ## Outputs
 

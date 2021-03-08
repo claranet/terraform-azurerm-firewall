@@ -1,7 +1,7 @@
 locals {
   default_tags = {
-    env   = "${var.environment}"
-    stack = "${var.stack}"
+    env   = var.environment
+    stack = var.stack
   }
 
   #Name of the subnet attached to the firewall. NOTE The Subnet used for the Firewall must have the name AzureFirewallSubnet and the subnet mask must be at least /26. Source: https://www.terraform.io/docs/providers/azurerm/r/firewall.html
@@ -12,4 +12,6 @@ locals {
 
   #Sku of the firewall's public ip. Accepted values are Basic and Standard. Note: The Public IP must have a Static allocation and Standard sku. Source: https://www.terraform.io/docs/providers/azurerm/r/firewall.html#public_ip_address_id
   public_ip_sku = "Standard"
+
+  public_ip_name = coalesce(var.public_ip_custom_name, "fw-${var.stack}-${var.client_name}-${var.location_short}-${var.environment}-pip")
 }
