@@ -22,7 +22,7 @@ module "azure-network-subnet" {
 }
 
 resource "azurerm_firewall" "firewall" {
-  name                = coalesce(var.custom_firewall_name, "${var.stack}-${var.client_name}-${var.location_short}-${var.environment}-firewall")
+  name                = local.firewall_name
   location            = var.location
   resource_group_name = var.resource_group_name
 

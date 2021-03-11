@@ -183,20 +183,23 @@ module "azure-workload-subnet" {
 
 | Name | Description | Type | Default | Required |
 |------|-------------|------|---------|:--------:|
-| application\_rule\_collections | Create an application rule collection | <pre>list(object({<br>    name     = string,<br>    priority = number,<br>    action   = string,<br>    rules = list(object({<br>      name             = string,<br>      source_addresses = list(string),<br>      target_fqdns     = list(string),<br>      protocols = list(object({<br>        port = string,<br>        type = string<br>      }))<br>    }))<br>  }))</pre> | `null` | no |
+| additional\_public\_ips | List of additional public ips' ids to attach to the firewall. | <pre>list(object({<br>    name                 = string,<br>    public_ip_address_id = string<br>  }))</pre> | `[]` | no |
+| application\_rule\_collections | Create an application rule collection | <pre>list(object({<br>    name     = string,<br>    priority = number,<br>    action   = string,<br>    rules = list(object({<br>      name             = string,<br>      source_addresses = list(string),<br>      source_ip_groups = list(string),<br>      target_fqdns     = list(string),<br>      protocols = list(object({<br>        port = string,<br>        type = string<br>      }))<br>    }))<br>  }))</pre> | `null` | no |
 | client\_name | Client name/account used in naming | `string` | n/a | yes |
 | custom\_firewall\_name | Optional custom firewall name | `string` | `""` | no |
+| deploy\_log\_workbook | Deploy Azure Workbook Log in log analytics workspace. [GitHub Azure](https://github.com/Azure/Azure-Network-Security/tree/master/Azure%20Firewall/Workbook%20-%20Azure%20Firewall%20Monitor%20Workbook) | `bool` | `true` | no |
+| dns\_servers | DNS Servers to use with Azure Firewall. Using this also activate DNS Proxy. | `list(string)` | `null` | no |
 | environment | Project environment | `string` | n/a | yes |
 | extra\_tags | Extra tags to add | `map(string)` | `{}` | no |
 | ip\_configuration\_name | Name of the ip\_configuration block. https://www.terraform.io/docs/providers/azurerm/r/firewall.html#ip_configuration | `string` | `"ip_configuration"` | no |
 | location | Azure region to use | `string` | n/a | yes |
 | location\_short | Short string for Azure location. | `string` | n/a | yes |
-| logs\_destination\_ids | List of IDs (storage, logAnalytics Workspace, EventHub) to push logs to. | `list(string)` | `null` | no |
+| logs\_destinations\_ids | List of IDs (storage, logAnalytics Workspace, EventHub) to push logs to. | `list(string)` | `null` | no |
 | logs\_logs\_categories | List of logs categories to log | `list(string)` | `null` | no |
 | logs\_metrics\_categories | List of metrics categories to log | `list(string)` | `null` | no |
 | logs\_retention\_days | Number of days to keep logs. | `number` | `32` | no |
-| nat\_rule\_collections | Create a Nat rule collection | <pre>object({<br>    name     = string,<br>    priority = number,<br>    action   = string,<br>    rules = list(object({<br>      name                  = string,<br>      source_addresses      = list(string),<br>      destination_port      = list(string),<br>      destination_addresses = list(string),<br>      tranlated_port        = number,<br>      translated_address    = string,<br>      protocols             = list(string)<br>    }))<br>  })</pre> | n/a | yes |
-| network\_rule\_collections | Create a network rule collection | <pre>list(object({<br>    name     = string,<br>    priority = number,<br>    action   = string,<br>    rules = list(object({<br>      name                  = string,<br>      source_addresses      = list(string),<br>      destinations_ports    = list(string),<br>      destination_addresses = list(string),<br>      protocols             = list(string)<br>    }))<br>  }))</pre> | `null` | no |
+| nat\_rule\_collections | Create a Nat rule collection | <pre>list(object({<br>    name     = string,<br>    priority = number,<br>    action   = string,<br>    rules = list(object({<br>      name                  = string,<br>      source_addresses      = list(string),<br>      source_ip_groups      = list(string),<br>      destination_ports     = list(string),<br>      destination_addresses = list(string),<br>      translated_port       = number,<br>      translated_address    = string,<br>      protocols             = list(string)<br>    }))<br>  }))</pre> | `null` | no |
+| network\_rule\_collections | Create a network rule collection | <pre>list(object({<br>    name     = string,<br>    priority = number,<br>    action   = string,<br>    rules = list(object({<br>      name                  = string,<br>      source_addresses      = list(string),<br>      source_ip_groups      = list(string),<br>      destination_ports     = list(string),<br>      destination_addresses = list(string),<br>      destination_ip_groups = list(string),<br>      destination_fqdns     = list(string),<br>      protocols             = list(string)<br>    }))<br>  }))</pre> | `null` | no |
 | public\_ip\_custom\_name | Custom name for the public IP | `string` | `null` | no |
 | resource\_group\_name | Resource group name | `string` | n/a | yes |
 | stack | Project stack name | `string` | n/a | yes |
@@ -212,7 +215,6 @@ module "azure-workload-subnet" {
 | private\_ip\_address | Firewall private IP |
 | public\_ip\_address | Firewall public IP |
 | subnet\_id | ID of the subnet attached to the firewall |
-
 
 ## Sources
 <https://www.terraform.io/docs/providers/azurerm/r/firewall.html>\

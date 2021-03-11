@@ -116,7 +116,7 @@ variable "nat_rule_collections" {
   default = null
 }
 
-variable "logs_destination_ids" {
+variable "logs_destinations_ids" {
   description = "List of IDs (storage, logAnalytics Workspace, EventHub) to push logs to."
   type        = list(string)
   default     = null
@@ -159,4 +159,11 @@ variable "additional_public_ips" {
     public_ip_address_id = string
   }))
   default = []
+}
+
+variable "deploy_log_workbook" {
+  description = "Deploy Azure Workbook Log in log analytics workspace. [GitHub Azure](https://github.com/Azure/Azure-Network-Security/tree/master/Azure%20Firewall/Workbook%20-%20Azure%20Firewall%20Monitor%20Workbook)"
+  type        = bool
+  default     = true
+
 }
