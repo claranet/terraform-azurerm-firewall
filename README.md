@@ -1,7 +1,7 @@
-# Azure Resource Group
+# Azure Firewall
 [![Changelog](https://img.shields.io/badge/changelog-release-green.svg)](CHANGELOG.md) [![Notice](https://img.shields.io/badge/notice-copyright-yellow.svg)](NOTICE) [![Apache V2 License](https://img.shields.io/badge/license-Apache%20V2-orange.svg)](LICENSE) [![TF Registry](https://img.shields.io/badge/terraform-registry-blue.svg)](https://registry.terraform.io/modules/claranet/firewall/azurerm/)
 
-Common Azure module to generate a firewall and its subnet.
+Common Azure module to generate an Azure Firewall and its dedicated subnet.
 
 ## Version compatibility
 
@@ -58,7 +58,7 @@ module "azure-firewall" {
   stack                = var.stack
   resource_group_name  = module.rg.resource_group_name
   virtual_network_name = module.vnet.virtual_network_name
-  subnet_cidr          = var.subnet_cidr
+  subnet_cidr          = "10.10.10.0/26"
 
   network_rule_collections = [
     {
@@ -67,17 +67,17 @@ module "azure-firewall" {
       action   = "Allow"
       rules = [
         {
-          name                  = "AllowSSH"
-          source_addresses      = ["10.1.0.0/24"]
+          name                  = "AllowSSHFromWorkload1ToWorkload2"
+          source_addresses      = ["10.10.1.0/24"]
           destination_ports     = ["22"]
-          destination_addresses = ["10.2.0.0/24"]
+          destination_addresses = ["10.10.2.0/24"]
           protocols             = ["TCP"]
         },
         {
-          name                  = "AllowRDP"
-          source_addresses      = ["10.1.0.0/24"]
+          name                  = "AllowRDPFromWorkload1ToWorkload2"
+          source_addresses      = ["10.10.1.0/24"]
           destination_ports     = ["3389"]
-          destination_addresses = ["10.3.0.0/24"]
+          destination_addresses = ["10.10.2.0/24"]
           protocols             = ["TCP"]
         }
       ]
@@ -92,7 +92,7 @@ module "azure-firewall" {
       rules = [
         {
           name             = "AllowGoogle"
-          source_addresses = ["10.0.0.0/16"]
+          source_addresses = ["10.10.1.0/24", "10.10.2.0/24"]
           target_fqdns     = ["*.google.com", "*.google.fr"]
           protocols = [
             {
@@ -120,7 +120,7 @@ module "azure-firewall" {
           destination_ports     = ["80", "443"]
           destination_addresses = ["x.x.x.x"] # Firewall public IP Address
           translated_port       = 80
-          translated_address    = "10.0.0.1"
+          translated_address    = "10.10.1.4"
           protocols             = ["TCP", "UDP"]
         }
       ]
@@ -178,6 +178,21 @@ module "azure-workload-subnet" {
   route_table_ids      = [module.azure-network-route-table.route_table_id]
 }
 
+module "azure-workload-2-subnet" {
+  source               = "claranet/subnet/azurerm"
+  version              = "x.x.x"
+  
+  environment          = local.environment
+  location_short       = module.azure-region.location_short
+  client_name          = local.client_name
+  stack                = local.stack
+  custom_subnet_names  = ["workload_2_subnet"]
+  resource_group_name  = module.rg.resource_group_name
+  virtual_network_name = module.vnet.virtual_network_name
+  subnet_cidr_list     = ["10.10.2.0/24"]
+
+  route_table_ids      = [module.azure-network-route-table.route_table_id]
+}
 ```
 ## Inputs
 
@@ -194,10 +209,11 @@ module "azure-workload-subnet" {
 | ip\_configuration\_name | Name of the ip\_configuration block. https://www.terraform.io/docs/providers/azurerm/r/firewall.html#ip_configuration | `string` | `"ip_configuration"` | no |
 | location | Azure region to use | `string` | n/a | yes |
 | location\_short | Short string for Azure location. | `string` | n/a | yes |
+| logs\_categories | List of logs categories to log | `list(string)` | `null` | no |
 | logs\_destinations\_ids | List of IDs (storage, logAnalytics Workspace, EventHub) to push logs to. | `list(string)` | `null` | no |
-| logs\_logs\_categories | List of logs categories to log | `list(string)` | `null` | no |
 | logs\_metrics\_categories | List of metrics categories to log | `list(string)` | `null` | no |
 | logs\_retention\_days | Number of days to keep logs. | `number` | `32` | no |
+| name\_prefix | Optional prefix for the generated name | `string` | `""` | no |
 | nat\_rule\_collections | Create a Nat rule collection | <pre>list(object({<br>    name     = string,<br>    priority = number,<br>    action   = string,<br>    rules = list(object({<br>      name                  = string,<br>      source_addresses      = list(string),<br>      source_ip_groups      = list(string),<br>      destination_ports     = list(string),<br>      destination_addresses = list(string),<br>      translated_port       = number,<br>      translated_address    = string,<br>      protocols             = list(string)<br>    }))<br>  }))</pre> | `null` | no |
 | network\_rule\_collections | Create a network rule collection | <pre>list(object({<br>    name     = string,<br>    priority = number,<br>    action   = string,<br>    rules = list(object({<br>      name                  = string,<br>      source_addresses      = list(string),<br>      source_ip_groups      = list(string),<br>      destination_ports     = list(string),<br>      destination_addresses = list(string),<br>      destination_ip_groups = list(string),<br>      destination_fqdns     = list(string),<br>      protocols             = list(string)<br>    }))<br>  }))</pre> | `null` | no |
 | public\_ip\_custom\_name | Custom name for the public IP | `string` | `null` | no |
@@ -214,14 +230,15 @@ module "azure-workload-subnet" {
 | firewall\_name | Firewall name |
 | private\_ip\_address | Firewall private IP |
 | public\_ip\_address | Firewall public IP |
-| subnet\_id | ID of the subnet attached to the firewall |
 
 ## Sources
-<https://www.terraform.io/docs/providers/azurerm/r/firewall.html>\
-<https://www.terraform.io/docs/providers/azurerm/r/firewall_application_rule_collection.html>\
-<https://www.terraform.io/docs/providers/azurerm/r/firewall_network_rule_collection.html>\
-<https://docs.microsoft.com/fr-fr/azure/firewall/overview>\
-<https://docs.microsoft.com/en-us/azure/firewall/tutorial-firewall-deploy-portal#create-a-default-route>\
-<https://docs.microsoft.com/en-us/azure/firewall/tutorial-firewall-dnat>\
-<https://docs.microsoft.com/fr-fr/azure/firewall/rule-processing>\
-<https://docs.microsoft.com/en-us/azure/firewall/tutorial-diagnostics>
+[registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/firewall](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/firewall)
+[registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/firewall_application_rule_collection](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/firewall_application_rule_collection)
+[registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/firewall_network_rule_collection](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/firewall_network_rule_collection)
+[registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/firewall_nat_rule_collection](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/firewall_nat_rule_collection)
+[docs.microsoft.com/en-us/azure/firewall/overview](https://docs.microsoft.com/en-us/azure/firewall/overview)
+[docs.microsoft.com/en-us/azure/firewall/tutorial-firewall-deploy-portal](https://docs.microsoft.com/en-us/azure/firewall/tutorial-firewall-deploy-portal)
+[docs.microsoft.com/en-us/azure/firewall/tutorial-firewall-dnat](https://docs.microsoft.com/en-us/azure/firewall/tutorial-firewall-dnat)
+[docs.microsoft.com/en-us/azure/firewall/rule-processing](https://docs.microsoft.com/en-us/azure/firewall/rule-processing)
+[docs.microsoft.com/en-us/azure/firewall/firewall-diagnostics](https://docs.microsoft.com/en-us/azure/firewall/firewall-diagnostics)
+[github.com/Azure/Azure-Network-Security/tree/master/Azure%20Firewall/Workbook%20-%20Azure%20Firewall%20Monitor%20Workbook](https://github.com/Azure/Azure-Network-Security/tree/master/Azure%20Firewall/Workbook%20-%20Azure%20Firewall%20Monitor%20Workbook)

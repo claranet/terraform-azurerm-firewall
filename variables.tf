@@ -19,6 +19,12 @@ variable "custom_firewall_name" {
   default     = ""
 }
 
+variable "name_prefix" {
+  description = "Optional prefix for the generated name"
+  type        = string
+  default     = ""
+}
+
 variable "environment" {
   description = "Project environment"
   type        = string
@@ -122,7 +128,7 @@ variable "logs_destinations_ids" {
   default     = null
 }
 
-variable "logs_logs_categories" {
+variable "logs_categories" {
   description = "List of logs categories to log"
   type        = list(string)
   default     = null

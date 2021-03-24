@@ -5,7 +5,7 @@ module "diagnostics-settings" {
   resource_id = azurerm_firewall.firewall.id
 
   logs_destinations_ids = var.logs_destinations_ids
-  log_categories        = var.logs_logs_categories
+  log_categories        = var.logs_categories
   metric_categories     = var.logs_metrics_categories
   retention_days        = var.logs_retention_days
 }
