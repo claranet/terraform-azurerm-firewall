@@ -1,4 +1,4 @@
-# unrealeased
+# v3.0.0/v4.0.0 - 2021-04-07
 
 Breaking
   * AZ-460: Rewrite module for TF 0.13+
