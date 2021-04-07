@@ -1,201 +1,175 @@
-variable "enabled" {
-  description = "Set to true or false to create or not the firewall"
-  type        = "string"
-  default     = false
-}
-
 variable "location" {
   description = "Azure region to use"
-  type        = "string"
+  type        = string
 }
 
 variable "location_short" {
   description = "Short string for Azure location."
-  type        = "string"
+  type        = string
 }
 
 variable "client_name" {
   description = "Client name/account used in naming"
-  type        = "string"
+  type        = string
 }
 
 variable "custom_firewall_name" {
   description = "Optional custom firewall name"
-  type        = "string"
+  type        = string
+  default     = ""
+}
+
+variable "name_prefix" {
+  description = "Optional prefix for the generated name"
+  type        = string
   default     = ""
 }
 
 variable "environment" {
   description = "Project environment"
-  type        = "string"
+  type        = string
 }
 
 variable "stack" {
   description = "Project stack name"
-  type        = "string"
+  type        = string
 }
 
 variable "resource_group_name" {
   description = "Resource group name"
-  type        = "string"
+  type        = string
 }
 
 variable "ip_configuration_name" {
   description = "Name of the ip_configuration block. https://www.terraform.io/docs/providers/azurerm/r/firewall.html#ip_configuration"
-  type        = "string"
+  type        = string
   default     = "ip_configuration"
 }
 
 variable "extra_tags" {
   description = "Extra tags to add"
-  type        = "map"
+  type        = map(string)
   default     = {}
 }
 
 variable "virtual_network_name" {
   description = "Name of the vnet attached to the firewall."
-  type        = "string"
+  type        = string
 }
 
 variable "subnet_cidr" {
   description = "The address prefix to use for the firewall's subnet"
-  type        = "string"
+  type        = string
 }
 
-variable "add_network_rules" {
-  description = "Add a Network Rule Collection within the Azure Firewall, or not. Set to true or false."
-  type        = "string"
-  default     = "false"
+variable "network_rule_collections" {
+  description = "Create a network rule collection"
+  type = list(object({
+    name     = string,
+    priority = number,
+    action   = string,
+    rules = list(object({
+      name                  = string,
+      source_addresses      = list(string),
+      source_ip_groups      = list(string),
+      destination_ports     = list(string),
+      destination_addresses = list(string),
+      destination_ip_groups = list(string),
+      destination_fqdns     = list(string),
+      protocols             = list(string)
+    }))
+  }))
+  default = null
 }
 
-variable "network_rule_collection_name" {
-  description = "Specifies the name of the Network Rule Collection which must be unique within the Firewall. Changing this forces a new resource to be created."
-  type        = "string"
-  default     = "network_rule_collection1"
+variable "application_rule_collections" {
+  description = "Create an application rule collection"
+  type = list(object({
+    name     = string,
+    priority = number,
+    action   = string,
+    rules = list(object({
+      name             = string,
+      source_addresses = list(string),
+      source_ip_groups = list(string),
+      target_fqdns     = list(string),
+      protocols = list(object({
+        port = string,
+        type = string
+      }))
+    }))
+  }))
+  default = null
 }
 
-variable "network_rule_collection_priority" {
-  description = "Specifies the priority of the rule collection. Possible values are between 100 - 65000. https://www.terraform.io/docs/providers/azurerm/r/firewall_network_rule_collection.html#priority"
-  type        = "string"
-  default     = "100"
+variable "nat_rule_collections" {
+  description = "Create a Nat rule collection"
+  type = list(object({
+    name     = string,
+    priority = number,
+    action   = string,
+    rules = list(object({
+      name                  = string,
+      source_addresses      = list(string),
+      source_ip_groups      = list(string),
+      destination_ports     = list(string),
+      destination_addresses = list(string),
+      translated_port       = number,
+      translated_address    = string,
+      protocols             = list(string)
+    }))
+  }))
+  default = null
 }
 
-variable "network_rule_collection_action" {
-  description = "Specifies the action the rules will apply to matching traffic. Possible values are Allow and Deny. https://www.terraform.io/docs/providers/azurerm/r/firewall_network_rule_collection.html#action"
-  type        = "string"
-  default     = "Deny"
+variable "logs_destinations_ids" {
+  description = "List of IDs (storage, logAnalytics Workspace, EventHub) to push logs to."
+  type        = list(string)
+  default     = null
 }
 
-variable "network_rules" {
-  description = "A list of network rule blocks. Format: https://www.terraform.io/docs/providers/azurerm/r/firewall_network_rule_collection.html#rule"
-  type        = "list"
-  default     = []
+variable "logs_categories" {
+  description = "List of logs categories to log"
+  type        = list(string)
+  default     = null
 }
 
-variable "add_app_rules" {
-  description = "Add an Application Rule Collection within the Azure Firewall, or not. Set to true or false."
-  type        = "string"
-  default     = "false"
+variable "logs_metrics_categories" {
+  description = "List of metrics categories to log"
+  type        = list(string)
+  default     = null
 }
 
-variable "app_rule_collection_name" {
-  description = "Specifies the name of the Application Rule Collection which must be unique within the Firewall. Changing this forces a new resource to be created."
-  type        = "string"
-  default     = "app_rule_collection1"
+variable "logs_retention_days" {
+  description = "Number of days to keep logs."
+  type        = number
+  default     = 32
 }
 
-variable "app_rule_collection_priority" {
-  description = "Specifies the priority of the application rule collection. Possible values are between 100 - 65000. https://www.terraform.io/docs/providers/azurerm/r/firewall_application_rule_collection.html#priority"
-  type        = "string"
-  default     = "100"
+variable "public_ip_custom_name" {
+  description = "Custom name for the public IP"
+  type        = string
+  default     = null
 }
 
-variable "app_rule_collection_action" {
-  description = "Specifies the action the rules will apply to matching traffic. Possible values are Allow and Deny. https://www.terraform.io/docs/providers/azurerm/r/firewall_application_rule_collection.html#action"
-  type        = "string"
-  default     = "Deny"
+variable "dns_servers" {
+  description = "DNS Servers to use with Azure Firewall. Using this also activate DNS Proxy."
+  type        = list(string)
+  default     = null
 }
 
-variable "application_rules" {
-  description = "A list of application rule blocks. Format: https://www.terraform.io/docs/providers/azurerm/r/firewall_application_rule_collection.html#rule . About the fqdn_tags in app rules: https://docs.microsoft.com/en-us/azure/firewall/fqdn-tags"
-  type        = "list"
-  default     = []
+variable "additional_public_ips" {
+  description = "List of additional public ips' ids to attach to the firewall."
+  type = list(object({
+    name                 = string,
+    public_ip_address_id = string
+  }))
+  default = []
 }
 
-variable "add_nat_rules" {
-  description = "Add an NAT Rule Collection within the Azure Firewall, or not. Set to true or false."
-  type        = "string"
-  default     = "false"
-}
+variable "deploy_log_workbook" {
+  description = "Deploy Azure Workbook Log in log analytics workspace. [GitHub Azure](https://github.com/Azure/Azure-Network-Security/tree/master/Azure%20Firewall/Workbook%20-%20Azure%20Firewall%20Monitor%20Workbook)"
+  type        = bool
+  default     = true
 
-variable "nat_rule_collection_name" {
-  description = "Specifies the name of the NAT Rule Collection which must be unique within the Firewall. Changing this forces a new resource to be created."
-  type        = "string"
-  default     = "nat_rule_collection1"
-}
-
-variable "nat_rule_collection_priority" {
-  description = "Specifies the priority of the NAT rule collection. Possible values are between 100 - 65000. https://www.terraform.io/docs/providers/azurerm/r/firewall_nat_rule_collection.html#priority"
-  type        = "string"
-  default     = "100"
-}
-
-variable "nat_rule_collection_action" {
-  description = "Specifies the action the rules will apply to matching traffic. Possible values are Dnat and Snat. https://www.terraform.io/docs/providers/azurerm/r/firewall_nat_rule_collection.html#action"
-  type        = "string"
-  default     = ""
-}
-
-variable "nat_rules" {
-  description = "A list of NAT rule blocks. Format: https://www.terraform.io/docs/providers/azurerm/r/firewall_nat_rule_collection.html#rule"
-  type        = "list"
-  default     = []
-}
-
-variable "enable_logs_to_storage" {
-  description = "Boolean flag to specify whether the logs should be sent to the Storage Account"
-  type        = "string"
-  default     = "false"
-}
-
-variable "enable_logs_to_log_analytics" {
-  description = "Boolean flag to specify whether the logs should be sent to Log Analytics"
-  type        = "string"
-  default     = "false"
-}
-
-variable "enable_logs_to_eventhub" {
-  description = "Boolean flag to specify whether the logs should be sent to EventHub"
-  type        = "string"
-  default     = "false"
-}
-
-variable "logs_storage_retention" {
-  description = "Retention in days for logs on Storage Account"
-  type        = "string"
-  default     = "30"
-}
-
-variable "logs_storage_account_id" {
-  description = "Storage Account id for logs"
-  type        = "string"
-  default     = ""
-}
-
-variable "logs_log_analytics_workspace_id" {
-  description = "Log Analytics Workspace id for logs"
-  type        = "string"
-  default     = ""
-}
-
-variable "logs_eventhub_workspace_name" {
-  description = "Specifies the name of the Event Hub where Diagnostics Data should be sent."
-  type        = "string"
-  default     = ""
-}
-
-variable "logs_eventhub_authorization_rule_id" {
-  description = "Specifies the ID of an Event Hub Namespace Authorization Rule used to send Diagnostics Data."
-  type        = "string"
-  default     = ""
 }
