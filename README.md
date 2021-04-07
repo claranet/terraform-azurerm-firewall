@@ -7,8 +7,8 @@ Common Azure module to generate an Azure Firewall and its dedicated subnet.
 
 | Module version | Terraform version | AzureRM version |
 |----------------|-------------------| --------------- |
-| >= 4.x.x       | 0.13.x            | >= 2.0          |
-| >= 3.x.x       | 0.12.x            | >= 2.0          |
+| >= 4.x.x       | 0.13.x            | >= 2.45         |
+| >= 3.x.x       | 0.12.x            | >= 2.45         |
 | >= 2.x.x       | 0.12.x            | < 2.0           |
 | <  2.x.x       | 0.11.x            | < 2.0           |
 
@@ -232,13 +232,14 @@ module "azure-workload-2-subnet" {
 | public\_ip\_address | Firewall public IP |
 
 ## Sources
-[registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/firewall](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/firewall)
-[registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/firewall_application_rule_collection](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/firewall_application_rule_collection)
-[registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/firewall_network_rule_collection](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/firewall_network_rule_collection)
-[registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/firewall_nat_rule_collection](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/firewall_nat_rule_collection)
-[docs.microsoft.com/en-us/azure/firewall/overview](https://docs.microsoft.com/en-us/azure/firewall/overview)
-[docs.microsoft.com/en-us/azure/firewall/tutorial-firewall-deploy-portal](https://docs.microsoft.com/en-us/azure/firewall/tutorial-firewall-deploy-portal)
-[docs.microsoft.com/en-us/azure/firewall/tutorial-firewall-dnat](https://docs.microsoft.com/en-us/azure/firewall/tutorial-firewall-dnat)
-[docs.microsoft.com/en-us/azure/firewall/rule-processing](https://docs.microsoft.com/en-us/azure/firewall/rule-processing)
-[docs.microsoft.com/en-us/azure/firewall/firewall-diagnostics](https://docs.microsoft.com/en-us/azure/firewall/firewall-diagnostics)
-[github.com/Azure/Azure-Network-Security/tree/master/Azure%20Firewall/Workbook%20-%20Azure%20Firewall%20Monitor%20Workbook](https://github.com/Azure/Azure-Network-Security/tree/master/Azure%20Firewall/Workbook%20-%20Azure%20Firewall%20Monitor%20Workbook)
+
+- [registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/firewall](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/firewall)
+- [registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/firewall_application_rule_collection](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/firewall_application_rule_collection)
+- [registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/firewall_network_rule_collection](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/firewall_network_rule_collection)
+- [registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/firewall_nat_rule_collection](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/firewall_nat_rule_collection)
+- [docs.microsoft.com/en-us/azure/firewall/overview](https://docs.microsoft.com/en-us/azure/firewall/overview)
+- [docs.microsoft.com/en-us/azure/firewall/tutorial-firewall-deploy-portal](https://docs.microsoft.com/en-us/azure/firewall/tutorial-firewall-deploy-portal)
+- [docs.microsoft.com/en-us/azure/firewall/tutorial-firewall-dnat](https://docs.microsoft.com/en-us/azure/firewall/tutorial-firewall-dnat)
+- [docs.microsoft.com/en-us/azure/firewall/rule-processing](https://docs.microsoft.com/en-us/azure/firewall/rule-processing)
+- [docs.microsoft.com/en-us/azure/firewall/firewall-diagnostics](https://docs.microsoft.com/en-us/azure/firewall/firewall-diagnostics)
+-[github.com/Azure/Azure-Network-Security/tree/master/Azure%20Firewall/Workbook%20-%20Azure%20Firewall%20Monitor%20Workbook](https://github.com/Azure/Azure-Network-Security/tree/master/Azure%20Firewall/Workbook%20-%20Azure%20Firewall%20Monitor%20Workbook)
