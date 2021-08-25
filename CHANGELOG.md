@@ -2,6 +2,7 @@
 
 Changed
   * AZ-532: Revamp README with latest `terraform-docs` tool
+  * AZ-530: Cleanup module, fix linter errors
 
 # v3.0.0/v4.0.0 - 2021-04-07
 

@@ -207,8 +207,8 @@ module "azure-workload-2-subnet" {
 
 | Name | Source | Version |
 |------|--------|---------|
-| azure-network-subnet | claranet/subnet/azurerm | 4.2.0 |
-| diagnostics-settings | claranet/diagnostic-settings/azurerm | 4.0.1 |
+| diagnostics\_settings | claranet/diagnostic-settings/azurerm | 4.0.2 |
+| firewall\_subnet | claranet/subnet/azurerm | 4.2.1 |
 
 ## Resources
 
@@ -219,7 +219,7 @@ module "azure-workload-2-subnet" {
 | [azurerm_firewall_nat_rule_collection.nat_rule_collection](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/firewall_nat_rule_collection) | resource |
 | [azurerm_firewall_network_rule_collection.network_rule_collection](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/firewall_network_rule_collection) | resource |
 | [azurerm_public_ip.firewall_public_ip](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/public_ip) | resource |
-| [azurerm_resource_group_template_deployment.firewall-workbook-logs](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/resource_group_template_deployment) | resource |
+| [azurerm_resource_group_template_deployment.firewall_workbook_logs](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/resource_group_template_deployment) | resource |
 
 ## Inputs
 
@@ -259,7 +259,6 @@ module "azure-workload-2-subnet" {
 | public\_ip\_address | Firewall public IP |
 | subnet\_id | ID of the subnet attached to the firewall |
 <!-- END_TF_DOCS -->
-
 ## Sources
 
 - [docs.microsoft.com/en-us/azure/firewall/overview](https://docs.microsoft.com/en-us/azure/firewall/overview)
