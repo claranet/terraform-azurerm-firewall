@@ -6,7 +6,8 @@ Common Azure module to generate an Azure Firewall and its dedicated subnet.
 ## Version compatibility
 
 | Module version | Terraform version | AzureRM version |
-|----------------|-------------------| --------------- |
+| -------------- | ----------------- | --------------- |
+| >= 5.x.x       | 0.15.x & 1.0.x    | >= 2.45         |
 | >= 4.x.x       | 0.13.x            | >= 2.45         |
 | >= 3.x.x       | 0.12.x            | >= 2.45         |
 | >= 2.x.x       | 0.12.x            | < 2.0           |
@@ -194,6 +195,32 @@ module "azure-workload-2-subnet" {
   route_table_ids      = [module.azure-network-route-table.route_table_id]
 }
 ```
+
+<!-- BEGIN_TF_DOCS -->
+## Providers
+
+| Name | Version |
+|------|---------|
+| azurerm | >= 2.45.0 |
+
+## Modules
+
+| Name | Source | Version |
+|------|--------|---------|
+| diagnostics\_settings | claranet/diagnostic-settings/azurerm | 4.0.2 |
+| firewall\_subnet | claranet/subnet/azurerm | 4.2.1 |
+
+## Resources
+
+| Name | Type |
+|------|------|
+| [azurerm_firewall.firewall](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/firewall) | resource |
+| [azurerm_firewall_application_rule_collection.application_rule_collection](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/firewall_application_rule_collection) | resource |
+| [azurerm_firewall_nat_rule_collection.nat_rule_collection](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/firewall_nat_rule_collection) | resource |
+| [azurerm_firewall_network_rule_collection.network_rule_collection](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/firewall_network_rule_collection) | resource |
+| [azurerm_public_ip.firewall_public_ip](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/public_ip) | resource |
+| [azurerm_resource_group_template_deployment.firewall_workbook_logs](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/resource_group_template_deployment) | resource |
+
 ## Inputs
 
 | Name | Description | Type | Default | Required |
@@ -230,16 +257,13 @@ module "azure-workload-2-subnet" {
 | firewall\_name | Firewall name |
 | private\_ip\_address | Firewall private IP |
 | public\_ip\_address | Firewall public IP |
-
+| subnet\_id | ID of the subnet attached to the firewall |
+<!-- END_TF_DOCS -->
 ## Sources
 
-- [registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/firewall](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/firewall)
-- [registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/firewall_application_rule_collection](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/firewall_application_rule_collection)
-- [registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/firewall_network_rule_collection](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/firewall_network_rule_collection)
-- [registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/firewall_nat_rule_collection](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/firewall_nat_rule_collection)
 - [docs.microsoft.com/en-us/azure/firewall/overview](https://docs.microsoft.com/en-us/azure/firewall/overview)
 - [docs.microsoft.com/en-us/azure/firewall/tutorial-firewall-deploy-portal](https://docs.microsoft.com/en-us/azure/firewall/tutorial-firewall-deploy-portal)
 - [docs.microsoft.com/en-us/azure/firewall/tutorial-firewall-dnat](https://docs.microsoft.com/en-us/azure/firewall/tutorial-firewall-dnat)
 - [docs.microsoft.com/en-us/azure/firewall/rule-processing](https://docs.microsoft.com/en-us/azure/firewall/rule-processing)
 - [docs.microsoft.com/en-us/azure/firewall/firewall-diagnostics](https://docs.microsoft.com/en-us/azure/firewall/firewall-diagnostics)
--[github.com/Azure/Azure-Network-Security/tree/master/Azure%20Firewall/Workbook%20-%20Azure%20Firewall%20Monitor%20Workbook](https://github.com/Azure/Azure-Network-Security/tree/master/Azure%20Firewall/Workbook%20-%20Azure%20Firewall%20Monitor%20Workbook)
+- [github.com/Azure/Azure-Network-Security/tree/master/Azure%20Firewall/Workbook%20-%20Azure%20Firewall%20Monitor%20Workbook](https://github.com/Azure/Azure-Network-Security/tree/master/Azure%20Firewall/Workbook%20-%20Azure%20Firewall%20Monitor%20Workbook)

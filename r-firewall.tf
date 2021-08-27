@@ -8,9 +8,9 @@ resource "azurerm_public_ip" "firewall_public_ip" {
   tags = merge(local.default_tags, var.extra_tags)
 }
 
-module "azure-network-subnet" {
+module "firewall_subnet" {
   source               = "claranet/subnet/azurerm"
-  version              = "4.2.0"
+  version              = "4.2.1"
   environment          = var.environment
   location_short       = var.location_short
   client_name          = var.client_name
@@ -28,7 +28,7 @@ resource "azurerm_firewall" "firewall" {
 
   ip_configuration {
     name                 = var.ip_configuration_name
-    subnet_id            = module.azure-network-subnet.subnet_id
+    subnet_id            = module.firewall_subnet.subnet_id
     public_ip_address_id = azurerm_public_ip.firewall_public_ip.id
   }
 
