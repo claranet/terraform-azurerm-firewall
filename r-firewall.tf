@@ -9,8 +9,9 @@ resource "azurerm_public_ip" "firewall_public_ip" {
 }
 
 module "firewall_subnet" {
-  source               = "claranet/subnet/azurerm"
-  version              = "4.2.1"
+  source  = "claranet/subnet/azurerm"
+  version = "4.2.1"
+
   environment          = var.environment
   location_short       = var.location_short
   client_name          = var.client_name
@@ -46,7 +47,8 @@ resource "azurerm_firewall" "firewall" {
 }
 
 resource "azurerm_firewall_network_rule_collection" "network_rule_collection" {
-  for_each            = try({ for collection in var.network_rule_collections : collection.name => collection }, toset([]))
+  for_each = try({ for collection in var.network_rule_collections : collection.name => collection }, toset([]))
+
   name                = each.key
   azure_firewall_name = azurerm_firewall.firewall.name
   resource_group_name = var.resource_group_name
@@ -69,7 +71,8 @@ resource "azurerm_firewall_network_rule_collection" "network_rule_collection" {
 }
 
 resource "azurerm_firewall_application_rule_collection" "application_rule_collection" {
-  for_each            = try({ for collection in var.application_rule_collections : collection.name => collection }, toset([]))
+  for_each = try({ for collection in var.application_rule_collections : collection.name => collection }, toset([]))
+
   name                = each.key
   azure_firewall_name = azurerm_firewall.firewall.name
   resource_group_name = var.resource_group_name
@@ -95,7 +98,8 @@ resource "azurerm_firewall_application_rule_collection" "application_rule_collec
 }
 
 resource "azurerm_firewall_nat_rule_collection" "nat_rule_collection" {
-  for_each            = try({ for collection in var.nat_rule_collections : collection.name => collection }, toset([]))
+  for_each = try({ for collection in var.nat_rule_collections : collection.name => collection }, toset([]))
+
   name                = each.key
   azure_firewall_name = azurerm_firewall.firewall.name
   resource_group_name = var.resource_group_name

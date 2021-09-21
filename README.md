@@ -3,13 +3,14 @@
 
 Common Azure module to generate an Azure Firewall and its dedicated subnet.
 
-## Version compatibility
+<!-- BEGIN_TF_DOCS -->
+## Global versioning rule for Claranet Azure modules
 
 | Module version | Terraform version | AzureRM version |
 | -------------- | ----------------- | --------------- |
-| >= 5.x.x       | 0.15.x & 1.0.x    | >= 2.45         |
-| >= 4.x.x       | 0.13.x            | >= 2.45         |
-| >= 3.x.x       | 0.12.x            | >= 2.45         |
+| >= 5.x.x       | 0.15.x & 1.0.x    | >= 2.0          |
+| >= 4.x.x       | 0.13.x            | >= 2.0          |
+| >= 3.x.x       | 0.12.x            | >= 2.0          |
 | >= 2.x.x       | 0.12.x            | < 2.0           |
 | <  2.x.x       | 0.11.x            | < 2.0           |
 
@@ -19,19 +20,19 @@ This module is optimized to work with the [Claranet terraform-wrapper](https://g
 which set some terraform variables in the environment needed by this module.
 More details about variables set by the `terraform-wrapper` available in the [documentation](https://github.com/claranet/terraform-wrapper#environment).
 
-## Usage
+```hcl
+module "azure_region" {
+  source  = "claranet/regions/azurerm"
+  version = "x.x.x"
 
-```shell
-module "azure-region" {
-  source       = "claranet/region/azurerm"
-  version      = "x.x.x"
-  azure_region = var.location
+  azure_region = var.azure_region
 }
 
 module "rg" {
-  source      = "claranet/rg/azurerm"
-  version     = "x.x.x"
-  location    = module.azure-region.location
+  source  = "claranet/rg/azurerm"
+  version = "x.x.x"
+
+  location    = module.azure_region.location
   client_name = var.client_name
   environment = var.environment
   stack       = var.stack
@@ -41,25 +42,41 @@ module "vnet" {
   source  = "claranet/vnet/azurerm"
   version = "x.x.x"
 
-  environment         = var.environment
-  location            = module.azure-region.location
-  location_short      = module.azure-region.location_short
-  client_name         = var.client_name
-  stack               = var.stack
+  environment    = var.environment
+  location       = module.azure_region.location
+  location_short = module.azure_region.location_short
+  client_name    = var.client_name
+  stack          = var.stack
+
   resource_group_name = module.rg.resource_group_name
-  vnet_cidr           = var.vnet_cidr
+  vnet_cidr           = ["10.10.1.0/16"]
 }
 
-module "azure-firewall" {
-  source               = "claranet/firewall/azurerm"
-  location             = module.azure-region.location
-  location_short       = module.azure-region.location_short
-  client_name          = var.client_name
-  environment          = var.environment
-  stack                = var.stack
+module "logs" {
+  source  = "claranet/run-common/azurerm//modules/logs"
+  version = "x.x.x"
+
+  client_name         = var.client_name
+  environment         = var.environment
+  stack               = var.stack
+  location            = module.azure_region.location
+  location_short      = module.azure_region.location_short
+  resource_group_name = module.rg.resource_group_name
+}
+
+module "firewall" {
+  source  = "claranet/firewall/azurerm"
+  version = "x.x.x"
+
+  location       = module.azure_region.location
+  location_short = module.azure_region.location_short
+  client_name    = var.client_name
+  environment    = var.environment
+  stack          = var.stack
+
   resource_group_name  = module.rg.resource_group_name
   virtual_network_name = module.vnet.virtual_network_name
-  subnet_cidr          = "10.10.10.0/26"
+  subnet_cidr          = "10.10.1.0/22"
 
   network_rule_collections = [
     {
@@ -73,6 +90,9 @@ module "azure-firewall" {
           destination_ports     = ["22"]
           destination_addresses = ["10.10.2.0/24"]
           protocols             = ["TCP"]
+          destination_fqdns     = null
+          destination_ip_groups = null
+          source_ip_groups      = null
         },
         {
           name                  = "AllowRDPFromWorkload1ToWorkload2"
@@ -80,6 +100,9 @@ module "azure-firewall" {
           destination_ports     = ["3389"]
           destination_addresses = ["10.10.2.0/24"]
           protocols             = ["TCP"]
+          destination_fqdns     = null
+          destination_ip_groups = null
+          source_ip_groups      = null
         }
       ]
     }
@@ -95,6 +118,7 @@ module "azure-firewall" {
           name             = "AllowGoogle"
           source_addresses = ["10.10.1.0/24", "10.10.2.0/24"]
           target_fqdns     = ["*.google.com", "*.google.fr"]
+          source_ip_groups = null
           protocols = [
             {
               port = "443"
@@ -123,80 +147,20 @@ module "azure-firewall" {
           translated_port       = 80
           translated_address    = "10.10.1.4"
           protocols             = ["TCP", "UDP"]
+          source_ip_groups      = null
         }
       ]
     }
   ]
 
-  logs_destination_ids = [
-    data.terraform_remote_state.run.outputs.logs_storage_account_id,
-    data.terraform_remote_state.run.outputs.log_analytics_workspace_id
-
+  logs_destinations_ids = [
+    module.logs.logs_storage_account_id,
+    module.logs.log_analytics_workspace_id
   ]
 }
+
 ```
 
-Example: To configure another subnet to use the firewall for outgoing traffic, add the following resources:
-```shell
-
-
-module "azure-network-route-table" {
-  source  = "claranet/route-table/azurerm"
-  version = "x.x.x"
-
-  client_name         = var.client_name
-  environment         = var.environment
-  stack               = var.stack
-  resource_group_name = module.rg.resource_group_name
-  location            = module.azure-region.location
-  location_short      = module.azure-region.location_short
-  
-  tags                = local.default_tags
-}
-
-resource "azurerm_route" "custom-route" {
-  name                   = "DefaultRouteToFw"
-  resource_group_name    = module.rg.resource_group_name
-  route_table_name       = module.azure-network-route-table.route_table_name
-  address_prefix         = "0.0.0.0/0"
-  next_hop_type          = "VirtualAppliance"
-  next_hop_in_ip_address = module.azure-firewall.private_ip_address[0]
-}
-
-module "azure-workload-subnet" {
-  source               = "claranet/subnet/azurerm"
-  version              = "x.x.x"
-  
-  environment          = local.environment
-  location_short       = module.azure-region.location_short
-  client_name          = local.client_name
-  stack                = local.stack
-  custom_subnet_names  = ["workload_subnet"]
-  resource_group_name  = module.rg.resource_group_name
-  virtual_network_name = module.vnet.virtual_network_name
-  subnet_cidr_list     = ["10.10.1.0/24"]
-
-  route_table_ids      = [module.azure-network-route-table.route_table_id]
-}
-
-module "azure-workload-2-subnet" {
-  source               = "claranet/subnet/azurerm"
-  version              = "x.x.x"
-  
-  environment          = local.environment
-  location_short       = module.azure-region.location_short
-  client_name          = local.client_name
-  stack                = local.stack
-  custom_subnet_names  = ["workload_2_subnet"]
-  resource_group_name  = module.rg.resource_group_name
-  virtual_network_name = module.vnet.virtual_network_name
-  subnet_cidr_list     = ["10.10.2.0/24"]
-
-  route_table_ids      = [module.azure-network-route-table.route_table_id]
-}
-```
-
-<!-- BEGIN_TF_DOCS -->
 ## Providers
 
 | Name | Version |
