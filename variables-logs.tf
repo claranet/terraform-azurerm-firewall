@@ -1,25 +1,30 @@
-# Logs/Diagnostics
+# Diag settings / logs parameters
 
 variable "logs_destinations_ids" {
-  description = "List of IDs (storage, logAnalytics Workspace, EventHub) to push logs to."
   type        = list(string)
-  default     = null
+  description = "List of destination resources Ids for logs diagnostics destination. Can be Storage Account, Log Analytics Workspace and Event Hub. No more than one of each can be set. Empty list to disable logging."
 }
 
 variable "logs_categories" {
-  description = "List of logs categories to log"
   type        = list(string)
+  description = "Log categories to send to destinations."
   default     = null
 }
 
 variable "logs_metrics_categories" {
-  description = "List of metrics categories to log"
   type        = list(string)
+  description = "Metrics categories to send to destinations."
   default     = null
 }
 
 variable "logs_retention_days" {
-  description = "Number of days to keep logs."
   type        = number
-  default     = 32
+  description = "Number of days to keep logs on storage account"
+  default     = 30
+}
+
+variable "custom_diagnostic_settings_name" {
+  description = "Custom name of the diagnostics settings, name will be 'default' if not set."
+  type        = string
+  default     = "default"
 }
