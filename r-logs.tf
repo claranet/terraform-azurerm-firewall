@@ -1,6 +1,6 @@
-module "diagnostics_settings" {
+module "diagnostics" {
   source  = "claranet/diagnostic-settings/azurerm"
-  version = "4.0.2"
+  version = "5.0.0"
 
   resource_id = azurerm_firewall.firewall.id
 
@@ -8,30 +8,9 @@ module "diagnostics_settings" {
   log_categories        = var.logs_categories
   metric_categories     = var.logs_metrics_categories
   retention_days        = var.logs_retention_days
-}
 
-resource "azurerm_resource_group_template_deployment" "firewall_workbook_logs" {
-  count = var.deploy_log_workbook && local.log_analytics_name != null ? 1 : 0
-
-  name                = "AzureFirewallMonitorWorkbook"
-  resource_group_name = var.resource_group_name
-  deployment_mode     = "Incremental"
-  template_content    = file(format("%s/arm-templates/Azure Firewall_ARM.json", path.module))
-
-  parameters_content = jsonencode({
-    DiagnosticsWorkspaceName = {
-      value = local.log_analytics_name
-    },
-    DiagnosticsWorkspaceSubscription = {
-      value = local.log_analytics_subscription_id
-    },
-    DiagnosticsWorkspaceResourceGroup = {
-      value = local.log_analytics_resource_group_name
-    }
-  })
-
-  # Avoid perpetual changes due to default parameters
-  lifecycle {
-    ignore_changes = [parameters_content]
-  }
+  use_caf_naming = var.use_caf_naming
+  custom_name    = var.custom_diagnostic_settings_name
+  name_prefix    = var.name_prefix
+  name_suffix    = var.name_suffix
 }

@@ -1,5 +1,8 @@
 # Unreleased
 
+Breaking
+  * AZ-515: Option to use Azure CAF naming provider to name resources
+
 Changed
   * AZ-572: Revamp examples and improve CI
 
