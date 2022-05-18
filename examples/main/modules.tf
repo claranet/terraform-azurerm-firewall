@@ -26,7 +26,7 @@ module "vnet" {
   stack          = var.stack
 
   resource_group_name = module.rg.resource_group_name
-  vnet_cidr           = ["10.10.1.0/16"]
+  vnet_cidr           = ["10.10.0.0/16"]
 }
 
 module "logs" {
@@ -53,7 +53,7 @@ module "firewall" {
 
   resource_group_name  = module.rg.resource_group_name
   virtual_network_name = module.vnet.virtual_network_name
-  subnet_cidr          = "10.10.1.0/22"
+  subnet_cidr          = "10.10.0.0/22"
 
   network_rule_collections = [
     {
@@ -63,9 +63,9 @@ module "firewall" {
       rules = [
         {
           name                  = "AllowSSHFromWorkload1ToWorkload2"
-          source_addresses      = ["10.10.1.0/24"]
+          source_addresses      = ["10.11.1.0/24"]
           destination_ports     = ["22"]
-          destination_addresses = ["10.10.2.0/24"]
+          destination_addresses = ["10.11.2.0/24"]
           protocols             = ["TCP"]
           destination_fqdns     = null
           destination_ip_groups = null
@@ -73,9 +73,9 @@ module "firewall" {
         },
         {
           name                  = "AllowRDPFromWorkload1ToWorkload2"
-          source_addresses      = ["10.10.1.0/24"]
+          source_addresses      = ["10.11.1.0/24"]
           destination_ports     = ["3389"]
-          destination_addresses = ["10.10.2.0/24"]
+          destination_addresses = ["10.11.2.0/24"]
           protocols             = ["TCP"]
           destination_fqdns     = null
           destination_ip_groups = null
@@ -93,7 +93,7 @@ module "firewall" {
       rules = [
         {
           name             = "AllowGoogle"
-          source_addresses = ["10.10.1.0/24", "10.10.2.0/24"]
+          source_addresses = ["10.11.1.0/24", "10.11.2.0/24"]
           target_fqdns     = ["*.google.com", "*.google.fr"]
           source_ip_groups = null
           protocols = [
@@ -119,7 +119,7 @@ module "firewall" {
         {
           name                  = "RedirectWeb"
           source_addresses      = ["*"]
-          destination_ports     = ["80", "443"]
+          destination_ports     = ["80"]
           destination_addresses = ["x.x.x.x"] # Firewall public IP Address
           translated_port       = 80
           translated_address    = "10.10.1.4"

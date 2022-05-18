@@ -50,7 +50,7 @@ module "vnet" {
   stack          = var.stack
 
   resource_group_name = module.rg.resource_group_name
-  vnet_cidr           = ["10.10.1.0/16"]
+  vnet_cidr           = ["10.10.0.0/16"]
 }
 
 module "logs" {
@@ -77,7 +77,7 @@ module "firewall" {
 
   resource_group_name  = module.rg.resource_group_name
   virtual_network_name = module.vnet.virtual_network_name
-  subnet_cidr          = "10.10.1.0/22"
+  subnet_cidr          = "10.10.0.0/22"
 
   network_rule_collections = [
     {
@@ -87,9 +87,9 @@ module "firewall" {
       rules = [
         {
           name                  = "AllowSSHFromWorkload1ToWorkload2"
-          source_addresses      = ["10.10.1.0/24"]
+          source_addresses      = ["10.11.1.0/24"]
           destination_ports     = ["22"]
-          destination_addresses = ["10.10.2.0/24"]
+          destination_addresses = ["10.11.2.0/24"]
           protocols             = ["TCP"]
           destination_fqdns     = null
           destination_ip_groups = null
@@ -97,9 +97,9 @@ module "firewall" {
         },
         {
           name                  = "AllowRDPFromWorkload1ToWorkload2"
-          source_addresses      = ["10.10.1.0/24"]
+          source_addresses      = ["10.11.1.0/24"]
           destination_ports     = ["3389"]
-          destination_addresses = ["10.10.2.0/24"]
+          destination_addresses = ["10.11.2.0/24"]
           protocols             = ["TCP"]
           destination_fqdns     = null
           destination_ip_groups = null
@@ -117,7 +117,7 @@ module "firewall" {
       rules = [
         {
           name             = "AllowGoogle"
-          source_addresses = ["10.10.1.0/24", "10.10.2.0/24"]
+          source_addresses = ["10.11.1.0/24", "10.11.2.0/24"]
           target_fqdns     = ["*.google.com", "*.google.fr"]
           source_ip_groups = null
           protocols = [
@@ -143,7 +143,7 @@ module "firewall" {
         {
           name                  = "RedirectWeb"
           source_addresses      = ["*"]
-          destination_ports     = ["80", "443"]
+          destination_ports     = ["80"]
           destination_addresses = ["x.x.x.x"] # Firewall public IP Address
           translated_port       = 80
           translated_address    = "10.10.1.4"
@@ -166,14 +166,14 @@ module "firewall" {
 | Name | Version |
 |------|---------|
 | azurecaf | ~> 1.1 |
-| azurerm | >= 2.45.0 |
+| azurerm | ~> 3.0 |
 
 ## Modules
 
 | Name | Source | Version |
 |------|--------|---------|
 | diagnostics | claranet/diagnostic-settings/azurerm | 5.0.0 |
-| firewall\_subnet | claranet/subnet/azurerm | 4.2.1 |
+| firewall\_subnet | claranet/subnet/azurerm | 5.0.0 |
 
 ## Resources
 
@@ -215,6 +215,7 @@ module "firewall" {
 | network\_rule\_collections | Create a network rule collection | <pre>list(object({<br>    name     = string,<br>    priority = number,<br>    action   = string,<br>    rules = list(object({<br>      name                  = string,<br>      source_addresses      = list(string),<br>      source_ip_groups      = list(string),<br>      destination_ports     = list(string),<br>      destination_addresses = list(string),<br>      destination_ip_groups = list(string),<br>      destination_fqdns     = list(string),<br>      protocols             = list(string)<br>    }))<br>  }))</pre> | `null` | no |
 | public\_ip\_custom\_name | Custom name for the public IP | `string` | `null` | no |
 | resource\_group\_name | Resource group name | `string` | n/a | yes |
+| sku\_tier | SKU tier of the Firewall. Possible values are `Premium` and `Standard` | `string` | `"Standard"` | no |
 | stack | Project stack name | `string` | n/a | yes |
 | subnet\_cidr | The address prefix to use for the firewall's subnet | `string` | n/a | yes |
 | use\_caf\_naming | Use the Azure CAF naming provider to generate default resource name. `custom_name` override this if set. Legacy default name is used if this is set to `false`. | `bool` | `true` | no |

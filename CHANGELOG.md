@@ -1,3 +1,8 @@
+# Unreleased
+
+Breaking
+  * AZ-717: Bump azurerm provider to v3
+
 # v5.1.0 - 2022-04-08
 
 Added

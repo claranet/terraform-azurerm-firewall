@@ -10,7 +10,7 @@ resource "azurerm_public_ip" "firewall_public_ip" {
 
 module "firewall_subnet" {
   source  = "claranet/subnet/azurerm"
-  version = "4.2.1"
+  version = "5.0.0"
 
   environment          = var.environment
   location_short       = var.location_short
@@ -26,7 +26,8 @@ resource "azurerm_firewall" "firewall" {
   name                = local.firewall_name
   location            = var.location
   resource_group_name = var.resource_group_name
-
+  sku_name            = "AZFW_VNet"
+  sku_tier            = var.sku_tier
   ip_configuration {
     name                 = var.ip_configuration_name
     subnet_id            = module.firewall_subnet.subnet_id
