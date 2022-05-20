@@ -1,4 +1,4 @@
-# Unreleased
+# v6.0.0 - 2022-05-20
 
 Breaking
   * AZ-717: Bump AzureRM provider version to `v3.0+`
