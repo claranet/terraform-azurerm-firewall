@@ -118,3 +118,9 @@ variable "deploy_log_workbook" {
   type        = bool
   default     = true
 }
+
+variable "sku_tier" {
+  description = "SKU tier of the Firewall. Possible values are `Premium` and `Standard`"
+  type        = string
+  default     = "Standard"
+}
