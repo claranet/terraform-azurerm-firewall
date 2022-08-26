@@ -4,6 +4,7 @@ resource "azurerm_public_ip" "firewall_public_ip" {
   resource_group_name = var.resource_group_name
   allocation_method   = local.public_ip_allocation_method
   sku                 = local.public_ip_sku
+  zones               = var.public_ip_zones
 
   tags = merge(local.default_tags, var.extra_tags)
 }
@@ -41,6 +42,8 @@ resource "azurerm_firewall" "firewall" {
       public_ip_address_id = lookup(ip_configuration.value, "public_ip_address_id")
     }
   }
+
+  private_ip_ranges = var.firewall_private_ip_ranges
 
   dns_servers = var.dns_servers
 
