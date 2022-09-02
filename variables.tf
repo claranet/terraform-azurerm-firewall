@@ -39,13 +39,13 @@ variable "subnet_cidr" {
 }
 
 variable "public_ip_zones" {
-  description = "Public ip Zones to configure."
-  type        = list(string)
-  default     = null
+  description = "Public IP zones to configure."
+  type        = list(number)
+  default     = [1, 2, 3]
 }
 
 variable "firewall_private_ip_ranges" {
-  description = "A list of SNAT private CIDR IP ranges, or the special string IANAPrivateRanges, which indicates Azure Firewall does not SNAT when the destination IP address is a private range per IANA RFC 1918."
+  description = "A list of SNAT private CIDR IP ranges, or the special string `IANAPrivateRanges`, which indicates Azure Firewall does not SNAT when the destination IP address is a private range per IANA RFC 1918."
   type        = list(string)
   default     = null
 }
