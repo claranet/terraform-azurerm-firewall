@@ -38,6 +38,18 @@ variable "subnet_cidr" {
   type        = string
 }
 
+variable "public_ip_zones" {
+  description = "Public IP zones to configure."
+  type        = list(number)
+  default     = [1, 2, 3]
+}
+
+variable "firewall_private_ip_ranges" {
+  description = "A list of SNAT private CIDR IP ranges, or the special string `IANAPrivateRanges`, which indicates Azure Firewall does not SNAT when the destination IP address is a private range per IANA RFC 1918."
+  type        = list(string)
+  default     = null
+}
+
 variable "network_rule_collections" {
   description = "Create a network rule collection"
   type = list(object({
