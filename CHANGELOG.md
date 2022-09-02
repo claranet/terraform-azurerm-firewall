@@ -1,4 +1,4 @@
-# Unreleased
+# v6.1.0 - 2022-09-02
 
 Added
  * AZ-832: Adding Public IP zones option and Private IPs range management
