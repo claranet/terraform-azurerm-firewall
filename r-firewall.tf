@@ -9,20 +9,6 @@ resource "azurerm_public_ip" "firewall_public_ip" {
   tags = merge(local.default_tags, var.extra_tags)
 }
 
-module "firewall_subnet" {
-  source  = "claranet/subnet/azurerm"
-  version = "5.0.0"
-
-  environment          = var.environment
-  location_short       = var.location_short
-  client_name          = var.client_name
-  stack                = var.stack
-  custom_subnet_name   = local.firewall_subnet_name
-  resource_group_name  = var.resource_group_name
-  virtual_network_name = var.virtual_network_name
-  subnet_cidr_list     = [var.subnet_cidr]
-}
-
 resource "azurerm_firewall" "firewall" {
   name                = local.firewall_name
   location            = var.location

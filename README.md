@@ -167,14 +167,14 @@ module "firewall" {
 | Name | Version |
 |------|---------|
 | azurecaf | ~> 1.1 |
-| azurerm | ~> 3.0 |
+| azurerm | ~> 3.18 |
 
 ## Modules
 
 | Name | Source | Version |
 |------|--------|---------|
 | diagnostics | claranet/diagnostic-settings/azurerm | 5.0.0 |
-| firewall\_subnet | claranet/subnet/azurerm | 5.0.0 |
+| firewall\_subnet | claranet/subnet/azurerm | 6.0.0 |
 
 ## Resources
 
