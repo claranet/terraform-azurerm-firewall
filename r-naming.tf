@@ -1,4 +1,4 @@
-resource "azurecaf_name" "firewall" {
+data "azurecaf_name" "firewall" {
   name          = var.stack
   resource_type = "azurerm_firewall"
   prefixes      = var.name_prefix == "" ? null : [local.name_prefix]
@@ -8,7 +8,7 @@ resource "azurecaf_name" "firewall" {
   separator     = "-"
 }
 
-resource "azurecaf_name" "firewall_pip" {
+data "azurecaf_name" "firewall_pip" {
   name          = var.stack
   resource_type = "azurerm_public_ip"
   prefixes      = var.name_prefix == "" ? ["fw"] : ["fw", local.name_prefix]
