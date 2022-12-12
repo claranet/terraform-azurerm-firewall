@@ -1,3 +1,8 @@
+# Unreleased
+
+Added
+  * AZ-940: Add `firewall_policy_id` option. Cannot be used in conjuction with `network_rule_collections`, `application_rule_collections` and `nat_rule_collections`
+
 # v6.3.1 - 2022-12-12
 
 Fixed
