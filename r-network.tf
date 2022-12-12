@@ -1,6 +1,6 @@
 module "firewall_subnet" {
   source  = "claranet/subnet/azurerm"
-  version = "6.0.0"
+  version = "6.1.0"
 
   environment    = var.environment
   location_short = var.location_short
