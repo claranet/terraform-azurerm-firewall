@@ -174,7 +174,7 @@ module "firewall" {
 | Name | Source | Version |
 |------|--------|---------|
 | diagnostics | claranet/diagnostic-settings/azurerm | 6.2.0 |
-| firewall\_subnet | claranet/subnet/azurerm | 6.0.0 |
+| firewall\_subnet | claranet/subnet/azurerm | 6.1.0 |
 
 ## Resources
 
