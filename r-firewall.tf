@@ -33,7 +33,6 @@ resource "azurerm_firewall" "firewall" {
 
   firewall_policy_id = var.firewall_policy_id
 
-
   dns_servers = var.dns_servers
 
   tags = merge(local.default_tags, var.extra_tags)
@@ -41,7 +40,7 @@ resource "azurerm_firewall" "firewall" {
   lifecycle {
     precondition {
       condition     = !(var.firewall_policy_id != null && (var.network_rule_collections != null || var.application_rule_collections != null || var.nat_rule_collections != null))
-      error_message = "Do not use firewall_policy_id with network_rule_collections or application_rule_collections or nat_rule_collections variables. Migrate them into your policy."
+      error_message = "Do not use var.firewall_policy_id with var.network_rule_collections, var.application_rule_collections or var.nat_rule_collections variables. Migrate them into your policy."
     }
   }
 }
