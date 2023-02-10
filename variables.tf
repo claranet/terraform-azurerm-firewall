@@ -136,3 +136,9 @@ variable "sku_tier" {
   type        = string
   default     = "Standard"
 }
+
+variable "firewall_policy_id" {
+  description = "Attach an existing firewall policy to this firewall. Cannot be used in conjuction with `network_rule_collections`, `application_rule_collections` and `nat_rule_collections` variables."
+  type        = string
+  default     = null
+}
