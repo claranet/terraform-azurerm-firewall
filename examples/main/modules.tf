@@ -30,7 +30,7 @@ module "vnet" {
 }
 
 module "logs" {
-  source  = "claranet/run-common/azurerm//modules/logs"
+  source  = "claranet/run/azurerm//modules/logs"
   version = "x.x.x"
 
   client_name         = var.client_name
