@@ -231,6 +231,7 @@ module "firewall" {
 | subnet\_cidr | The address prefix to use for the firewall's subnet | `string` | n/a | yes |
 | use\_caf\_naming | Use the Azure CAF naming provider to generate default resource name. `custom_name` override this if set. Legacy default name is used if this is set to `false`. | `bool` | `true` | no |
 | virtual\_network\_name | Name of the vnet attached to the firewall. | `string` | n/a | yes |
+| zones | Optional - Specifies a list of Availability Zones in which this Azure Firewall should be located. Changing this forces a new Azure Firewall to be created. | `list(number)` | `null` | no |
 
 ## Outputs
 
