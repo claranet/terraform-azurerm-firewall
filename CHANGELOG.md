@@ -1,4 +1,4 @@
-# Unreleased
+# v6.5.0 - 2023-07-07
 
 Added
   * AZ-1104: Add `zones` option to deploy on availability zones
