@@ -15,6 +15,7 @@ resource "azurerm_firewall" "firewall" {
   resource_group_name = var.resource_group_name
   sku_name            = "AZFW_VNet"
   sku_tier            = var.sku_tier
+  zones               = var.zones
   ip_configuration {
     name                 = var.ip_configuration_name
     subnet_id            = module.firewall_subnet.subnet_id

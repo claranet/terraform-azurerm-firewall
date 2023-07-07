@@ -137,6 +137,12 @@ variable "sku_tier" {
   default     = "Standard"
 }
 
+variable "zones" {
+  description = "Optional - Specifies a list of Availability Zones in which this Azure Firewall should be located. Changing this forces a new Azure Firewall to be created."
+  type        = list(number)
+  default     = null
+}
+
 variable "firewall_policy_id" {
   description = "Attach an existing firewall policy to this firewall. Cannot be used in conjuction with `network_rule_collections`, `application_rule_collections` and `nat_rule_collections` variables."
   type        = string
