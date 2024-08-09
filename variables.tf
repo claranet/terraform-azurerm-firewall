@@ -148,3 +148,9 @@ variable "firewall_policy_id" {
   type        = string
   default     = null
 }
+
+variable "public_ip_ddos_protection_mode" {
+  description = "The ddos protection mode to use for the firewall's public address."
+  type        = string
+  default     = "VirtualNetworkInherited"
+}

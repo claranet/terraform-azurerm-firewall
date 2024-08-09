@@ -1,10 +1,11 @@
 resource "azurerm_public_ip" "firewall_public_ip" {
-  name                = local.public_ip_name
-  location            = var.location
-  resource_group_name = var.resource_group_name
-  allocation_method   = local.public_ip_allocation_method
-  sku                 = local.public_ip_sku
-  zones               = var.public_ip_zones
+  name                 = local.public_ip_name
+  location             = var.location
+  resource_group_name  = var.resource_group_name
+  allocation_method    = local.public_ip_allocation_method
+  sku                  = local.public_ip_sku
+  zones                = var.public_ip_zones
+  ddos_protection_mode = var.public_ip_ddos_protection_mode
 
   tags = merge(local.default_tags, var.extra_tags)
 }
