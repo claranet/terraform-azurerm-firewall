@@ -25,8 +25,8 @@ resource "azurerm_firewall" "firewall" {
   dynamic "ip_configuration" {
     for_each = toset(var.additional_public_ips)
     content {
-      name                 = lookup(ip_configuration.value, "name")
-      public_ip_address_id = lookup(ip_configuration.value, "public_ip_address_id")
+      name                 = ip_configuration.value.name
+      public_ip_address_id = ip_configuration.value.public_ip_address_id
     }
   }
 
