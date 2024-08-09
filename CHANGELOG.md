@@ -1,3 +1,59 @@
+## 6.6.0 (2024-08-09)
+
+
+### Features
+
+* add public ip ddos protection 5dba28f
+
+
+### Bug Fixes
+
+* **AZ-1447:** fix resource naming and lint 5bdccc6
+
+
+### Continuous Integration
+
+* **AZ-1391:** enable semantic-release [skip ci] 0cca7f9
+* **AZ-1391:** update semantic-release config [skip ci] 199dfd5
+
+
+### Miscellaneous Chores
+
+* **deps:** add renovate.json a98c6e0
+* **deps:** enable automerge on renovate 8c4849d
+* **deps:** update dependency opentofu to v1.7.0 aa0da13
+* **deps:** update dependency opentofu to v1.7.1 1030e02
+* **deps:** update dependency opentofu to v1.7.2 fbfd037
+* **deps:** update dependency opentofu to v1.7.3 67d42c3
+* **deps:** update dependency opentofu to v1.8.0 eb56667
+* **deps:** update dependency opentofu to v1.8.1 ccb373a
+* **deps:** update dependency pre-commit to v3.7.1 d8e950a
+* **deps:** update dependency pre-commit to v3.8.0 0d3b413
+* **deps:** update dependency terraform-docs to v0.18.0 09a677b
+* **deps:** update dependency tflint to v0.51.0 0cdc927
+* **deps:** update dependency tflint to v0.51.1 45fa3a6
+* **deps:** update dependency tflint to v0.51.2 81b5992
+* **deps:** update dependency tflint to v0.52.0 2e37b06
+* **deps:** update dependency trivy to v0.50.2 cba52ac
+* **deps:** update dependency trivy to v0.50.4 d95694e
+* **deps:** update dependency trivy to v0.51.0 6dd0045
+* **deps:** update dependency trivy to v0.51.1 949700a
+* **deps:** update dependency trivy to v0.51.2 f4fe93e
+* **deps:** update dependency trivy to v0.51.4 1b58276
+* **deps:** update dependency trivy to v0.52.0 7814ec0
+* **deps:** update dependency trivy to v0.52.1 3c056c6
+* **deps:** update dependency trivy to v0.52.2 206e8fd
+* **deps:** update dependency trivy to v0.53.0 ed109d7
+* **deps:** update dependency trivy to v0.54.1 d8d693a
+* **deps:** update pre-commit hook antonbabenko/pre-commit-terraform to v1.92.0 45bff65
+* **deps:** update pre-commit hook antonbabenko/pre-commit-terraform to v1.92.1 f3ef36f
+* **deps:** update renovate.json 63d5043
+* **deps:** update terraform claranet/diagnostic-settings/azurerm to ~> 6.5.0 3e24fbf
+* **deps:** update terraform claranet/subnet/azurerm to v6.3.0 78689f5
+* **deps:** update terraform claranet/subnet/azurerm to v7 d6fca07
+* **pre-commit:** update commitlint hook 593562e
+* **release:** remove legacy `VERSION` file 6589fed
+
 # v6.5.0 - 2023-07-07
 
 Added
