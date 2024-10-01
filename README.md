@@ -174,14 +174,14 @@ module "firewall" {
 | Name | Version |
 |------|---------|
 | azurecaf | ~> 1.2, >= 1.2.22 |
-| azurerm | ~> 3.39 |
+| azurerm | ~> 3.107 |
 
 ## Modules
 
 | Name | Source | Version |
 |------|--------|---------|
 | diagnostics | claranet/diagnostic-settings/azurerm | ~> 6.5.0 |
-| firewall\_subnet | claranet/subnet/azurerm | 7.0.0 |
+| firewall\_subnet | claranet/subnet/azurerm | 7.1.0 |
 
 ## Resources
 
@@ -200,8 +200,8 @@ module "firewall" {
 
 | Name | Description | Type | Default | Required |
 |------|-------------|------|---------|:--------:|
-| additional\_public\_ips | List of additional public ips' ids to attach to the firewall. | <pre>list(object({<br>    name                 = string,<br>    public_ip_address_id = string<br>  }))</pre> | `[]` | no |
-| application\_rule\_collections | Create an application rule collection | <pre>list(object({<br>    name     = string,<br>    priority = number,<br>    action   = string,<br>    rules = list(object({<br>      name             = string,<br>      source_addresses = list(string),<br>      source_ip_groups = list(string),<br>      target_fqdns     = list(string),<br>      protocols = list(object({<br>        port = string,<br>        type = string<br>      }))<br>    }))<br>  }))</pre> | `null` | no |
+| additional\_public\_ips | List of additional public ips' ids to attach to the firewall. | <pre>list(object({<br/>    name                 = string,<br/>    public_ip_address_id = string<br/>  }))</pre> | `[]` | no |
+| application\_rule\_collections | Create an application rule collection | <pre>list(object({<br/>    name     = string,<br/>    priority = number,<br/>    action   = string,<br/>    rules = list(object({<br/>      name             = string,<br/>      source_addresses = list(string),<br/>      source_ip_groups = list(string),<br/>      target_fqdns     = list(string),<br/>      protocols = list(object({<br/>        port = string,<br/>        type = string<br/>      }))<br/>    }))<br/>  }))</pre> | `null` | no |
 | client\_name | Client name/account used in naming | `string` | n/a | yes |
 | custom\_diagnostic\_settings\_name | Custom name of the diagnostics settings, name will be 'default' if not set. | `string` | `"default"` | no |
 | custom\_firewall\_name | Optional custom firewall name | `string` | `""` | no |
@@ -216,15 +216,15 @@ module "firewall" {
 | location | Azure region to use | `string` | n/a | yes |
 | location\_short | Short string for Azure location. | `string` | n/a | yes |
 | logs\_categories | Log categories to send to destinations. | `list(string)` | `null` | no |
-| logs\_destinations\_ids | List of destination resources IDs for logs diagnostic destination.<br>Can be `Storage Account`, `Log Analytics Workspace` and `Event Hub`. No more than one of each can be set.<br>If you want to specify an Azure EventHub to send logs and metrics to, you need to provide a formated string with both the EventHub Namespace authorization send ID and the EventHub name (name of the queue to use in the Namespace) separated by the `|` character. | `list(string)` | n/a | yes |
+| logs\_destinations\_ids | List of destination resources IDs for logs diagnostic destination.<br/>Can be `Storage Account`, `Log Analytics Workspace` and `Event Hub`. No more than one of each can be set.<br/>If you want to specify an Azure EventHub to send logs and metrics to, you need to provide a formated string with both the EventHub Namespace authorization send ID and the EventHub name (name of the queue to use in the Namespace) separated by the `|` character. | `list(string)` | n/a | yes |
 | logs\_metrics\_categories | Metrics categories to send to destinations. | `list(string)` | `null` | no |
 | name\_prefix | Optional prefix for the generated name | `string` | `""` | no |
 | name\_suffix | Optional suffix for the generated name | `string` | `""` | no |
-| nat\_rule\_collections | Create a Nat rule collection | <pre>list(object({<br>    name     = string,<br>    priority = number,<br>    action   = string,<br>    rules = list(object({<br>      name                  = string,<br>      source_addresses      = list(string),<br>      source_ip_groups      = list(string),<br>      destination_ports     = list(string),<br>      destination_addresses = list(string),<br>      translated_port       = number,<br>      translated_address    = string,<br>      protocols             = list(string)<br>    }))<br>  }))</pre> | `null` | no |
-| network\_rule\_collections | Create a network rule collection | <pre>list(object({<br>    name     = string,<br>    priority = number,<br>    action   = string,<br>    rules = list(object({<br>      name                  = string,<br>      source_addresses      = list(string),<br>      source_ip_groups      = list(string),<br>      destination_ports     = list(string),<br>      destination_addresses = list(string),<br>      destination_ip_groups = list(string),<br>      destination_fqdns     = list(string),<br>      protocols             = list(string)<br>    }))<br>  }))</pre> | `null` | no |
+| nat\_rule\_collections | Create a Nat rule collection | <pre>list(object({<br/>    name     = string,<br/>    priority = number,<br/>    action   = string,<br/>    rules = list(object({<br/>      name                  = string,<br/>      source_addresses      = list(string),<br/>      source_ip_groups      = list(string),<br/>      destination_ports     = list(string),<br/>      destination_addresses = list(string),<br/>      translated_port       = number,<br/>      translated_address    = string,<br/>      protocols             = list(string)<br/>    }))<br/>  }))</pre> | `null` | no |
+| network\_rule\_collections | Create a network rule collection | <pre>list(object({<br/>    name     = string,<br/>    priority = number,<br/>    action   = string,<br/>    rules = list(object({<br/>      name                  = string,<br/>      source_addresses      = list(string),<br/>      source_ip_groups      = list(string),<br/>      destination_ports     = list(string),<br/>      destination_addresses = list(string),<br/>      destination_ip_groups = list(string),<br/>      destination_fqdns     = list(string),<br/>      protocols             = list(string)<br/>    }))<br/>  }))</pre> | `null` | no |
 | public\_ip\_custom\_name | Custom name for the public IP | `string` | `null` | no |
 | public\_ip\_ddos\_protection\_mode | The ddos protection mode to use for the firewall's public address. | `string` | `"VirtualNetworkInherited"` | no |
-| public\_ip\_zones | Public IP zones to configure. | `list(number)` | <pre>[<br>  1,<br>  2,<br>  3<br>]</pre> | no |
+| public\_ip\_zones | Public IP zones to configure. | `list(number)` | <pre>[<br/>  1,<br/>  2,<br/>  3<br/>]</pre> | no |
 | resource\_group\_name | Resource group name | `string` | n/a | yes |
 | sku\_tier | SKU tier of the Firewall. Possible values are `Premium` and `Standard` | `string` | `"Standard"` | no |
 | stack | Project stack name | `string` | n/a | yes |
