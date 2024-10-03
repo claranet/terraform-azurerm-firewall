@@ -1,3 +1,9 @@
+## 6.7.0 (2024-10-03)
+
+### Features
+
+* use Claranet "azurecaf" provider 9912774
+
 ## 6.6.1 (2024-10-01)
 
 ### Documentation
