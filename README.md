@@ -180,7 +180,7 @@ module "firewall" {
 
 | Name | Source | Version |
 |------|--------|---------|
-| diagnostics | claranet/diagnostic-settings/azurerm | ~> 6.5.0 |
+| diagnostics | claranet/diagnostic-settings/azurerm | ~> 7.0.0 |
 | firewall\_subnet | claranet/subnet/azurerm | 7.2.0 |
 
 ## Resources
