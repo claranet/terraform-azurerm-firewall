@@ -1,3 +1,28 @@
+## 7.0.0 (2024-11-04)
+
+### ⚠ BREAKING CHANGES
+
+* **doc:** bump provider version
+
+### Bug Fixes
+
+* **doc:** bump provider version 2829d3e
+
+### Miscellaneous Chores
+
+* **deps:** update dependency claranet/diagnostic-settings/azurerm to v7 8a067ce
+* **deps:** update dependency claranet/subnet/azurerm to v7.2.0 ed3f974
+* **deps:** update dependency opentofu to v1.8.3 c42bdc0
+* **deps:** update dependency opentofu to v1.8.4 525e28d
+* **deps:** update dependency pre-commit to v4 e0c4a5b
+* **deps:** update dependency trivy to v0.56.0 52d233f
+* **deps:** update dependency trivy to v0.56.1 0b30c72
+* **deps:** update dependency trivy to v0.56.2 8bb60c7
+* **deps:** update pre-commit hook pre-commit/pre-commit-hooks to v5 f1aee6d
+* **deps:** update pre-commit hook tofuutils/pre-commit-opentofu to v2.1.0 b678904
+* prepare for new examples structure 7fee499
+* update examples structure 7a2f541
+
 ## 6.7.0 (2024-10-03)
 
 ### Features
