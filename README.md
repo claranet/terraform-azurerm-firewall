@@ -34,49 +34,6 @@ More details about variables set by the `terraform-wrapper` available in the [do
 [Hashicorp Terraform](https://github.com/hashicorp/terraform/). Instead, we recommend to use [OpenTofu](https://github.com/opentofu/opentofu/).
 
 ```hcl
-module "azure_region" {
-  source  = "claranet/regions/azurerm"
-  version = "x.x.x"
-
-  azure_region = var.azure_region
-}
-
-module "rg" {
-  source  = "claranet/rg/azurerm"
-  version = "x.x.x"
-
-  location    = module.azure_region.location
-  client_name = var.client_name
-  environment = var.environment
-  stack       = var.stack
-}
-
-module "vnet" {
-  source  = "claranet/vnet/azurerm"
-  version = "x.x.x"
-
-  environment    = var.environment
-  location       = module.azure_region.location
-  location_short = module.azure_region.location_short
-  client_name    = var.client_name
-  stack          = var.stack
-
-  resource_group_name = module.rg.resource_group_name
-  vnet_cidr           = ["10.10.0.0/16"]
-}
-
-module "logs" {
-  source  = "claranet/run/azurerm//modules/logs"
-  version = "x.x.x"
-
-  client_name         = var.client_name
-  environment         = var.environment
-  stack               = var.stack
-  location            = module.azure_region.location
-  location_short      = module.azure_region.location_short
-  resource_group_name = module.rg.resource_group_name
-}
-
 module "firewall" {
   source  = "claranet/firewall/azurerm"
   version = "x.x.x"
@@ -87,8 +44,8 @@ module "firewall" {
   environment    = var.environment
   stack          = var.stack
 
-  resource_group_name  = module.rg.resource_group_name
-  virtual_network_name = module.vnet.virtual_network_name
+  resource_group_name  = module.rg.name
+  virtual_network_name = module.vnet.name
   subnet_cidr          = "10.10.0.0/22"
 
   network_rule_collections = [
@@ -167,8 +124,8 @@ module "firewall" {
   ]
 
   logs_destinations_ids = [
-    module.logs.logs_storage_account_id,
-    module.logs.log_analytics_workspace_id
+    # module.logs.logs_storage_account_id,
+    # module.logs.log_analytics_workspace_id
   ]
 }
 ```
@@ -178,24 +135,24 @@ module "firewall" {
 | Name | Version |
 |------|---------|
 | azurecaf | ~> 1.2, >= 1.2.22 |
-| azurerm | ~> 3.116 |
+| azurerm | ~> 4.0 |
 
 ## Modules
 
 | Name | Source | Version |
 |------|--------|---------|
-| diagnostics | claranet/diagnostic-settings/azurerm | ~> 7.0.0 |
-| firewall\_subnet | claranet/subnet/azurerm | 7.2.0 |
+| diagnostics | claranet/diagnostic-settings/azurerm | ~> 8.0.0 |
+| firewall\_subnet | claranet/subnet/azurerm | ~> 8.0.0 |
 
 ## Resources
 
 | Name | Type |
 |------|------|
-| [azurerm_firewall.firewall](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/firewall) | resource |
-| [azurerm_firewall_application_rule_collection.application_rule_collection](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/firewall_application_rule_collection) | resource |
-| [azurerm_firewall_nat_rule_collection.nat_rule_collection](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/firewall_nat_rule_collection) | resource |
-| [azurerm_firewall_network_rule_collection.network_rule_collection](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/firewall_network_rule_collection) | resource |
-| [azurerm_public_ip.firewall_public_ip](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/public_ip) | resource |
+| [azurerm_firewall.main](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/firewall) | resource |
+| [azurerm_firewall_application_rule_collection.main](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/firewall_application_rule_collection) | resource |
+| [azurerm_firewall_nat_rule_collection.main](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/firewall_nat_rule_collection) | resource |
+| [azurerm_firewall_network_rule_collection.main](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/firewall_network_rule_collection) | resource |
+| [azurerm_public_ip.main](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/public_ip) | resource |
 | [azurerm_resource_group_template_deployment.firewall_workbook_logs](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/resource_group_template_deployment) | resource |
 | [azurecaf_name.firewall](https://registry.terraform.io/providers/claranet/azurecaf/latest/docs/data-sources/name) | data source |
 | [azurecaf_name.firewall_pip](https://registry.terraform.io/providers/claranet/azurecaf/latest/docs/data-sources/name) | data source |
@@ -205,35 +162,34 @@ module "firewall" {
 | Name | Description | Type | Default | Required |
 |------|-------------|------|---------|:--------:|
 | additional\_public\_ips | List of additional public ips' ids to attach to the firewall. | <pre>list(object({<br/>    name                 = string,<br/>    public_ip_address_id = string<br/>  }))</pre> | `[]` | no |
-| application\_rule\_collections | Create an application rule collection | <pre>list(object({<br/>    name     = string,<br/>    priority = number,<br/>    action   = string,<br/>    rules = list(object({<br/>      name             = string,<br/>      source_addresses = list(string),<br/>      source_ip_groups = list(string),<br/>      target_fqdns     = list(string),<br/>      protocols = list(object({<br/>        port = string,<br/>        type = string<br/>      }))<br/>    }))<br/>  }))</pre> | `null` | no |
-| client\_name | Client name/account used in naming | `string` | n/a | yes |
-| custom\_diagnostic\_settings\_name | Custom name of the diagnostics settings, name will be 'default' if not set. | `string` | `"default"` | no |
-| custom\_firewall\_name | Optional custom firewall name | `string` | `""` | no |
-| default\_tags\_enabled | Option to enable or disable default tags | `bool` | `true` | no |
-| deploy\_log\_workbook | Deploy Azure Workbook Log in log analytics workspace. [GitHub Azure](https://github.com/Azure/Azure-Network-Security/tree/master/Azure%20Firewall/Workbook%20-%20Azure%20Firewall%20Monitor%20Workbook) | `bool` | `true` | no |
+| application\_rule\_collections | Create an application rule collection. | <pre>list(object({<br/>    name     = string,<br/>    priority = number,<br/>    action   = string,<br/>    rules = list(object({<br/>      name             = string,<br/>      source_addresses = list(string),<br/>      source_ip_groups = list(string),<br/>      target_fqdns     = list(string),<br/>      protocols = list(object({<br/>        port = string,<br/>        type = string<br/>      }))<br/>    }))<br/>  }))</pre> | `null` | no |
+| client\_name | Client name/account used in naming. | `string` | n/a | yes |
+| custom\_name | Optional custom firewall name. | `string` | `""` | no |
+| default\_tags\_enabled | Option to enable or disable default tags. | `bool` | `true` | no |
+| deploy\_log\_workbook | Deploy Azure Workbook Log in log analytics workspace. [GitHub Azure](https://github.com/Azure/Azure-Network-Security/tree/master/Azure%20Firewall/Workbook%20-%20Azure%20Firewall%20Monitor%20Workbook). | `bool` | `true` | no |
+| diagnostic\_settings\_custom\_name | Custom name of the diagnostics settings, name will be `default` if not set. | `string` | `"default"` | no |
 | dns\_servers | DNS Servers to use with Azure Firewall. Using this also activate DNS Proxy. | `list(string)` | `null` | no |
-| environment | Project environment | `string` | n/a | yes |
-| extra\_tags | Extra tags to add | `map(string)` | `{}` | no |
+| environment | Project environment. | `string` | n/a | yes |
+| extra\_tags | Extra tags to add. | `map(string)` | `{}` | no |
 | firewall\_policy\_id | Attach an existing firewall policy to this firewall. Cannot be used in conjuction with `network_rule_collections`, `application_rule_collections` and `nat_rule_collections` variables. | `string` | `null` | no |
-| firewall\_private\_ip\_ranges | A list of SNAT private CIDR IP ranges, or the special string `IANAPrivateRanges`, which indicates Azure Firewall does not SNAT when the destination IP address is a private range per IANA RFC 1918. | `list(string)` | `null` | no |
-| ip\_configuration\_name | Name of the ip\_configuration block. https://www.terraform.io/docs/providers/azurerm/r/firewall.html#ip_configuration | `string` | `"ip_configuration"` | no |
-| location | Azure region to use | `string` | n/a | yes |
+| ip\_configuration\_name | Name of the ip\_configuration block. See [documentation](https://www.terraform.io/docs/providers/azurerm/r/firewall.html#ip_configuration). | `string` | `"ip_configuration"` | no |
+| location | Azure region to use. | `string` | n/a | yes |
 | location\_short | Short string for Azure location. | `string` | n/a | yes |
 | logs\_categories | Log categories to send to destinations. | `list(string)` | `null` | no |
-| logs\_destinations\_ids | List of destination resources IDs for logs diagnostic destination.<br/>Can be `Storage Account`, `Log Analytics Workspace` and `Event Hub`. No more than one of each can be set.<br/>If you want to specify an Azure EventHub to send logs and metrics to, you need to provide a formated string with both the EventHub Namespace authorization send ID and the EventHub name (name of the queue to use in the Namespace) separated by the `|` character. | `list(string)` | n/a | yes |
+| logs\_destinations\_ids | List of destination resources IDs for logs diagnostic destination.<br/>Can be `Storage Account`, `Log Analytics Workspace` and `Event Hub`. No more than one of each can be set.<br/>If you want to use Azure EventHub as a destination, you must provide a formatted string containing both the EventHub Namespace authorization send ID and the EventHub name (name of the queue to use in the Namespace) separated by the <code>&#124;</code> character. | `list(string)` | n/a | yes |
 | logs\_metrics\_categories | Metrics categories to send to destinations. | `list(string)` | `null` | no |
-| name\_prefix | Optional prefix for the generated name | `string` | `""` | no |
-| name\_suffix | Optional suffix for the generated name | `string` | `""` | no |
-| nat\_rule\_collections | Create a Nat rule collection | <pre>list(object({<br/>    name     = string,<br/>    priority = number,<br/>    action   = string,<br/>    rules = list(object({<br/>      name                  = string,<br/>      source_addresses      = list(string),<br/>      source_ip_groups      = list(string),<br/>      destination_ports     = list(string),<br/>      destination_addresses = list(string),<br/>      translated_port       = number,<br/>      translated_address    = string,<br/>      protocols             = list(string)<br/>    }))<br/>  }))</pre> | `null` | no |
-| network\_rule\_collections | Create a network rule collection | <pre>list(object({<br/>    name     = string,<br/>    priority = number,<br/>    action   = string,<br/>    rules = list(object({<br/>      name                  = string,<br/>      source_addresses      = list(string),<br/>      source_ip_groups      = list(string),<br/>      destination_ports     = list(string),<br/>      destination_addresses = list(string),<br/>      destination_ip_groups = list(string),<br/>      destination_fqdns     = list(string),<br/>      protocols             = list(string)<br/>    }))<br/>  }))</pre> | `null` | no |
-| public\_ip\_custom\_name | Custom name for the public IP | `string` | `null` | no |
-| public\_ip\_ddos\_protection\_mode | The ddos protection mode to use for the firewall's public address. | `string` | `"VirtualNetworkInherited"` | no |
+| name\_prefix | Optional prefix for the generated name. | `string` | `""` | no |
+| name\_suffix | Optional suffix for the generated name. | `string` | `""` | no |
+| nat\_rule\_collections | Create a Nat rule collection. | <pre>list(object({<br/>    name     = string,<br/>    priority = number,<br/>    action   = string,<br/>    rules = list(object({<br/>      name                  = string,<br/>      source_addresses      = list(string),<br/>      source_ip_groups      = list(string),<br/>      destination_ports     = list(string),<br/>      destination_addresses = list(string),<br/>      translated_port       = number,<br/>      translated_address    = string,<br/>      protocols             = list(string)<br/>    }))<br/>  }))</pre> | `null` | no |
+| network\_rule\_collections | Create a network rule collection. | <pre>list(object({<br/>    name     = string,<br/>    priority = number,<br/>    action   = string,<br/>    rules = list(object({<br/>      name                  = string,<br/>      source_addresses      = list(string),<br/>      source_ip_groups      = list(string),<br/>      destination_ports     = list(string),<br/>      destination_addresses = list(string),<br/>      destination_ip_groups = list(string),<br/>      destination_fqdns     = list(string),<br/>      protocols             = list(string)<br/>    }))<br/>  }))</pre> | `null` | no |
+| private\_ip\_ranges | A list of SNAT private CIDR IP ranges, or the special string `IANAPrivateRanges`, which indicates Azure Firewall does not SNAT when the destination IP address is a private range per IANA RFC 1918. | `list(string)` | `null` | no |
+| public\_ip\_custom\_name | Custom name for the public IP. | `string` | `null` | no |
+| public\_ip\_ddos\_protection\_mode | The DDoS protection mode to use for the firewall's public address. | `string` | `"VirtualNetworkInherited"` | no |
 | public\_ip\_zones | Public IP zones to configure. | `list(number)` | <pre>[<br/>  1,<br/>  2,<br/>  3<br/>]</pre> | no |
-| resource\_group\_name | Resource group name | `string` | n/a | yes |
-| sku\_tier | SKU tier of the Firewall. Possible values are `Premium` and `Standard` | `string` | `"Standard"` | no |
-| stack | Project stack name | `string` | n/a | yes |
-| subnet\_cidr | The address prefix to use for the firewall's subnet | `string` | n/a | yes |
-| use\_caf\_naming | Use the Azure CAF naming provider to generate default resource name. `custom_name` override this if set. Legacy default name is used if this is set to `false`. | `bool` | `true` | no |
+| resource\_group\_name | Resource group name. | `string` | n/a | yes |
+| sku\_tier | SKU tier of the Firewall. Possible values are `Premium` and `Standard`. | `string` | `"Standard"` | no |
+| stack | Project stack name. | `string` | n/a | yes |
+| subnet\_cidr | The address prefix to use for the firewall's subnet. | `string` | n/a | yes |
 | virtual\_network\_name | Name of the vnet attached to the firewall. | `string` | n/a | yes |
 | zones | Optional - Specifies a list of Availability Zones in which this Azure Firewall should be located. Changing this forces a new Azure Firewall to be created. | `list(number)` | `null` | no |
 
@@ -241,11 +197,18 @@ module "firewall" {
 
 | Name | Description |
 |------|-------------|
-| firewall\_id | Firewall generated id |
-| firewall\_name | Firewall name |
-| private\_ip\_address | Firewall private IP |
-| public\_ip\_address | Firewall public IP |
-| subnet\_id | ID of the subnet attached to the firewall |
+| diagnostic\_settings | Diagnostic settings module object. |
+| id | Firewall generated id. |
+| module\_subnet | Subnet module object. |
+| name | Firewall name. |
+| private\_ip\_address | Firewall private IP. |
+| public\_ip\_address | Firewall public IP. |
+| resource | Azure Firewall resource object. |
+| resource\_application\_rule\_collection | Azure Firewall application rule collection resource object. |
+| resource\_nat\_rule\_collection | Azure Firewall NAT rule collection resource object. |
+| resource\_network\_rule\_collection | Azure Firewall network rule collection resource object. |
+| resource\_public\_ip | Azure Firewall public IP resource object. |
+| subnet\_id | ID of the subnet attached to the firewall. |
 <!-- END_TF_DOCS -->
 ## Sources
 

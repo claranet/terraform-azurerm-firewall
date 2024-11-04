@@ -1,5 +1,5 @@
 variable "location" {
-  description = "Azure region to use"
+  description = "Azure region to use."
   type        = string
 }
 
@@ -9,22 +9,22 @@ variable "location_short" {
 }
 
 variable "client_name" {
-  description = "Client name/account used in naming"
+  description = "Client name/account used in naming."
   type        = string
 }
 
 variable "environment" {
-  description = "Project environment"
+  description = "Project environment."
   type        = string
 }
 
 variable "stack" {
-  description = "Project stack name"
+  description = "Project stack name."
   type        = string
 }
 
 variable "resource_group_name" {
-  description = "Resource group name"
+  description = "Resource group name."
   type        = string
 }
 
@@ -34,7 +34,7 @@ variable "virtual_network_name" {
 }
 
 variable "subnet_cidr" {
-  description = "The address prefix to use for the firewall's subnet"
+  description = "The address prefix to use for the firewall's subnet."
   type        = string
 }
 
@@ -44,14 +44,14 @@ variable "public_ip_zones" {
   default     = [1, 2, 3]
 }
 
-variable "firewall_private_ip_ranges" {
+variable "private_ip_ranges" {
   description = "A list of SNAT private CIDR IP ranges, or the special string `IANAPrivateRanges`, which indicates Azure Firewall does not SNAT when the destination IP address is a private range per IANA RFC 1918."
   type        = list(string)
   default     = null
 }
 
 variable "network_rule_collections" {
-  description = "Create a network rule collection"
+  description = "Create a network rule collection."
   type = list(object({
     name     = string,
     priority = number,
@@ -71,7 +71,7 @@ variable "network_rule_collections" {
 }
 
 variable "application_rule_collections" {
-  description = "Create an application rule collection"
+  description = "Create an application rule collection."
   type = list(object({
     name     = string,
     priority = number,
@@ -91,7 +91,7 @@ variable "application_rule_collections" {
 }
 
 variable "nat_rule_collections" {
-  description = "Create a Nat rule collection"
+  description = "Create a Nat rule collection."
   type = list(object({
     name     = string,
     priority = number,
@@ -126,13 +126,13 @@ variable "additional_public_ips" {
 }
 
 variable "deploy_log_workbook" {
-  description = "Deploy Azure Workbook Log in log analytics workspace. [GitHub Azure](https://github.com/Azure/Azure-Network-Security/tree/master/Azure%20Firewall/Workbook%20-%20Azure%20Firewall%20Monitor%20Workbook)"
+  description = "Deploy Azure Workbook Log in log analytics workspace. [GitHub Azure](https://github.com/Azure/Azure-Network-Security/tree/master/Azure%20Firewall/Workbook%20-%20Azure%20Firewall%20Monitor%20Workbook)."
   type        = bool
   default     = true
 }
 
 variable "sku_tier" {
-  description = "SKU tier of the Firewall. Possible values are `Premium` and `Standard`"
+  description = "SKU tier of the Firewall. Possible values are `Premium` and `Standard`."
   type        = string
   default     = "Standard"
 }
@@ -150,7 +150,7 @@ variable "firewall_policy_id" {
 }
 
 variable "public_ip_ddos_protection_mode" {
-  description = "The ddos protection mode to use for the firewall's public address."
+  description = "The DDoS protection mode to use for the firewall's public address."
   type        = string
   default     = "VirtualNetworkInherited"
 }
