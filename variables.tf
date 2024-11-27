@@ -154,3 +154,9 @@ variable "public_ip_ddos_protection_mode" {
   type        = string
   default     = "VirtualNetworkInherited"
 }
+
+variable "subnet_default_outbound_access_enabled" {
+  description = "Whether to allow default outbound traffic from the subnet."
+  type        = bool
+  default     = false
+}

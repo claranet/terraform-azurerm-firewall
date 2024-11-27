@@ -190,6 +190,7 @@ module "firewall" {
 | sku\_tier | SKU tier of the Firewall. Possible values are `Premium` and `Standard`. | `string` | `"Standard"` | no |
 | stack | Project stack name. | `string` | n/a | yes |
 | subnet\_cidr | The address prefix to use for the firewall's subnet. | `string` | n/a | yes |
+| subnet\_default\_outbound\_access\_enabled | Whether to allow default outbound traffic from the subnet. | `bool` | `false` | no |
 | virtual\_network\_name | Name of the vnet attached to the firewall. | `string` | n/a | yes |
 | zones | Optional - Specifies a list of Availability Zones in which this Azure Firewall should be located. Changing this forces a new Azure Firewall to be created. | `list(number)` | `null` | no |
 
