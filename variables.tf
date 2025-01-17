@@ -91,7 +91,7 @@ variable "application_rule_collections" {
 }
 
 variable "nat_rule_collections" {
-  description = "Create a Nat rule collection."
+  description = "Create a NAT rule collection."
   type = list(object({
     name     = string,
     priority = number,
@@ -126,7 +126,7 @@ variable "additional_public_ips" {
 }
 
 variable "deploy_log_workbook" {
-  description = "Deploy Azure Workbook Log in log analytics workspace. [GitHub Azure](https://github.com/Azure/Azure-Network-Security/tree/master/Azure%20Firewall/Workbook%20-%20Azure%20Firewall%20Monitor%20Workbook)."
+  description = "Deploy Azure Workbook Log in log analytics workspace. See [documentation](https://github.com/Azure/Azure-Network-Security/tree/master/Azure%20Firewall/Workbook%20-%20Azure%20Firewall%20Monitor%20Workbook)."
   type        = bool
   default     = true
 }
