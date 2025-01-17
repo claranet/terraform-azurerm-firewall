@@ -124,8 +124,8 @@ module "firewall" {
   ]
 
   logs_destinations_ids = [
-    module.logs.logs_storage_account_id,
-    module.logs.log_analytics_workspace_id
+    module.logs.storage_account_id,
+    module.logs.id
   ]
 }
 ```
@@ -166,7 +166,7 @@ module "firewall" {
 | client\_name | Client name/account used in naming. | `string` | n/a | yes |
 | custom\_name | Optional custom firewall name. | `string` | `""` | no |
 | default\_tags\_enabled | Option to enable or disable default tags. | `bool` | `true` | no |
-| deploy\_log\_workbook | Deploy Azure Workbook Log in log analytics workspace. [GitHub Azure](https://github.com/Azure/Azure-Network-Security/tree/master/Azure%20Firewall/Workbook%20-%20Azure%20Firewall%20Monitor%20Workbook). | `bool` | `true` | no |
+| deploy\_log\_workbook | Deploy Azure Workbook Log in log analytics workspace. See [documentation](https://github.com/Azure/Azure-Network-Security/tree/master/Azure%20Firewall/Workbook%20-%20Azure%20Firewall%20Monitor%20Workbook). | `bool` | `true` | no |
 | diagnostic\_settings\_custom\_name | Custom name of the diagnostics settings, name will be `default` if not set. | `string` | `"default"` | no |
 | dns\_servers | DNS Servers to use with Azure Firewall. Using this also activate DNS Proxy. | `list(string)` | `null` | no |
 | environment | Project environment. | `string` | n/a | yes |
@@ -180,7 +180,7 @@ module "firewall" {
 | logs\_metrics\_categories | Metrics categories to send to destinations. | `list(string)` | `null` | no |
 | name\_prefix | Optional prefix for the generated name. | `string` | `""` | no |
 | name\_suffix | Optional suffix for the generated name. | `string` | `""` | no |
-| nat\_rule\_collections | Create a Nat rule collection. | <pre>list(object({<br/>    name     = string,<br/>    priority = number,<br/>    action   = string,<br/>    rules = list(object({<br/>      name                  = string,<br/>      source_addresses      = list(string),<br/>      source_ip_groups      = list(string),<br/>      destination_ports     = list(string),<br/>      destination_addresses = list(string),<br/>      translated_port       = number,<br/>      translated_address    = string,<br/>      protocols             = list(string)<br/>    }))<br/>  }))</pre> | `null` | no |
+| nat\_rule\_collections | Create a NAT rule collection. | <pre>list(object({<br/>    name     = string,<br/>    priority = number,<br/>    action   = string,<br/>    rules = list(object({<br/>      name                  = string,<br/>      source_addresses      = list(string),<br/>      source_ip_groups      = list(string),<br/>      destination_ports     = list(string),<br/>      destination_addresses = list(string),<br/>      translated_port       = number,<br/>      translated_address    = string,<br/>      protocols             = list(string)<br/>    }))<br/>  }))</pre> | `null` | no |
 | network\_rule\_collections | Create a network rule collection. | <pre>list(object({<br/>    name     = string,<br/>    priority = number,<br/>    action   = string,<br/>    rules = list(object({<br/>      name                  = string,<br/>      source_addresses      = list(string),<br/>      source_ip_groups      = list(string),<br/>      destination_ports     = list(string),<br/>      destination_addresses = list(string),<br/>      destination_ip_groups = list(string),<br/>      destination_fqdns     = list(string),<br/>      protocols             = list(string)<br/>    }))<br/>  }))</pre> | `null` | no |
 | private\_ip\_ranges | A list of SNAT private CIDR IP ranges, or the special string `IANAPrivateRanges`, which indicates Azure Firewall does not SNAT when the destination IP address is a private range per IANA RFC 1918. | `list(string)` | `null` | no |
 | public\_ip\_custom\_name | Custom name for the public IP. | `string` | `null` | no |
