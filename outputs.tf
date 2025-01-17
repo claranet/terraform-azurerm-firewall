@@ -1,6 +1,6 @@
 output "id" {
-  description = "Firewall generated id."
-  value       = azurerm_firewall.main[*].id
+  description = "Firewall generated ID."
+  value       = azurerm_firewall.main.id
 }
 
 output "name" {

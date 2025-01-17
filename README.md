@@ -124,8 +124,8 @@ module "firewall" {
   ]
 
   logs_destinations_ids = [
-    # module.logs.logs_storage_account_id,
-    # module.logs.log_analytics_workspace_id
+    module.logs.logs_storage_account_id,
+    module.logs.log_analytics_workspace_id
   ]
 }
 ```
@@ -199,7 +199,7 @@ module "firewall" {
 | Name | Description |
 |------|-------------|
 | diagnostic\_settings | Diagnostic settings module object. |
-| id | Firewall generated id. |
+| id | Firewall generated ID. |
 | module\_subnet | Subnet module object. |
 | name | Firewall name. |
 | private\_ip\_address | Firewall private IP. |
