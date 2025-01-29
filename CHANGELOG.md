@@ -1,3 +1,40 @@
+## 8.0.0 (2025-01-29)
+
+### ⚠ BREAKING CHANGES
+
+* **AZ-1088:** module v8 structure and updates
+
+### Features
+
+* **AZ-1088:** add `subnet_default_outbound_access_enabled` option 245409d
+* **AZ-1088:** module v8 structure and updates 92112f7
+
+### Documentation
+
+* **AZ-1088:** fix example 8bd2dff
+* **AZ-1088:** update docs ff17cbf
+* **AZ-1088:** update example 485d1f8
+
+### Miscellaneous Chores
+
+* **AZ-1088:** apply suggestion cb212ba
+* **AZ-1088:** apply suggestions c7f749f
+* **AZ-1088:** apply suggestions bf0b391
+* **deps:** update dependency opentofu to v1.8.6 2e5d243
+* **deps:** update dependency opentofu to v1.8.8 bda7b64
+* **deps:** update dependency opentofu to v1.9.0 0dc2b69
+* **deps:** update dependency pre-commit to v4.1.0 ad43ef1
+* **deps:** update dependency tflint to v0.54.0 f5a6eb8
+* **deps:** update dependency tflint to v0.55.0 fccf111
+* **deps:** update dependency trivy to v0.57.1 f4b583d
+* **deps:** update dependency trivy to v0.58.1 f6a585c
+* **deps:** update dependency trivy to v0.58.2 a793473
+* **deps:** update pre-commit hook alessandrojcm/commitlint-pre-commit-hook to v9.19.0 ed7932a
+* **deps:** update pre-commit hook alessandrojcm/commitlint-pre-commit-hook to v9.20.0 725601d
+* **deps:** update tools 1c4c765
+* **deps:** update tools 2fd2d06
+* update tflint config for v0.55.0 6916fcb
+
 ## 7.0.0 (2024-11-04)
 
 ### ⚠ BREAKING CHANGES
