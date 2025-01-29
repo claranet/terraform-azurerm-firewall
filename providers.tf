@@ -6,7 +6,7 @@ terraform {
     }
     azurecaf = {
       source  = "claranet/azurecaf"
-      version = "~> 1.2, >= 1.2.22"
+      version = "~> 1.2.29"
     }
   }
 }
