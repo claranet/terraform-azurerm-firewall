@@ -1,4 +1,4 @@
-resource "azurerm_public_ip" "firewall_public_ip" {
+resource "azurerm_public_ip" "main" {
   name                 = local.public_ip_name
   location             = var.location
   resource_group_name  = var.resource_group_name
@@ -10,8 +10,13 @@ resource "azurerm_public_ip" "firewall_public_ip" {
   tags = merge(local.default_tags, var.extra_tags)
 }
 
-resource "azurerm_firewall" "firewall" {
-  name                = local.firewall_name
+moved {
+  from = azurerm_public_ip.firewall_public_ip
+  to   = azurerm_public_ip.main
+}
+
+resource "azurerm_firewall" "main" {
+  name                = local.name
   location            = var.location
   resource_group_name = var.resource_group_name
   sku_name            = "AZFW_VNet"
@@ -19,8 +24,8 @@ resource "azurerm_firewall" "firewall" {
   zones               = var.zones
   ip_configuration {
     name                 = var.ip_configuration_name
-    subnet_id            = module.firewall_subnet.subnet_id
-    public_ip_address_id = azurerm_public_ip.firewall_public_ip.id
+    subnet_id            = module.firewall_subnet.id
+    public_ip_address_id = azurerm_public_ip.main.id
   }
 
   dynamic "ip_configuration" {
@@ -31,7 +36,7 @@ resource "azurerm_firewall" "firewall" {
     }
   }
 
-  private_ip_ranges = var.firewall_private_ip_ranges
+  private_ip_ranges = var.private_ip_ranges
 
   firewall_policy_id = var.firewall_policy_id
 
@@ -47,11 +52,16 @@ resource "azurerm_firewall" "firewall" {
   }
 }
 
-resource "azurerm_firewall_network_rule_collection" "network_rule_collection" {
+moved {
+  from = azurerm_firewall.firewall
+  to   = azurerm_firewall.main
+}
+
+resource "azurerm_firewall_network_rule_collection" "main" {
   for_each = try({ for collection in var.network_rule_collections : collection.name => collection }, toset([]))
 
   name                = each.key
-  azure_firewall_name = azurerm_firewall.firewall.name
+  azure_firewall_name = azurerm_firewall.main.name
   resource_group_name = var.resource_group_name
   priority            = each.value.priority
   action              = each.value.action
@@ -71,11 +81,16 @@ resource "azurerm_firewall_network_rule_collection" "network_rule_collection" {
   }
 }
 
-resource "azurerm_firewall_application_rule_collection" "application_rule_collection" {
+moved {
+  from = azurerm_firewall_network_rule_collection.network_rule_collection
+  to   = azurerm_firewall_network_rule_collection.main
+}
+
+resource "azurerm_firewall_application_rule_collection" "main" {
   for_each = try({ for collection in var.application_rule_collections : collection.name => collection }, toset([]))
 
   name                = each.key
-  azure_firewall_name = azurerm_firewall.firewall.name
+  azure_firewall_name = azurerm_firewall.main.name
   resource_group_name = var.resource_group_name
   priority            = each.value.priority
   action              = each.value.action
@@ -98,11 +113,16 @@ resource "azurerm_firewall_application_rule_collection" "application_rule_collec
   }
 }
 
-resource "azurerm_firewall_nat_rule_collection" "nat_rule_collection" {
+moved {
+  from = azurerm_firewall_application_rule_collection.application_rule_collection
+  to   = azurerm_firewall_application_rule_collection.main
+}
+
+resource "azurerm_firewall_nat_rule_collection" "main" {
   for_each = try({ for collection in var.nat_rule_collections : collection.name => collection }, toset([]))
 
   name                = each.key
-  azure_firewall_name = azurerm_firewall.firewall.name
+  azure_firewall_name = azurerm_firewall.main.name
   resource_group_name = var.resource_group_name
   priority            = each.value.priority
   action              = each.value.action
@@ -119,4 +139,9 @@ resource "azurerm_firewall_nat_rule_collection" "nat_rule_collection" {
       protocols             = rule.value.protocols
     }
   }
+}
+
+moved {
+  from = azurerm_firewall_nat_rule_collection.nat_rule_collection
+  to   = azurerm_firewall_nat_rule_collection.main
 }
