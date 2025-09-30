@@ -1,3 +1,48 @@
+## 8.0.1 (2025-09-30)
+
+### Code Refactoring
+
+* **deps:** 🔗 update claranet/azurecaf to ~> 1.3.0 🔧 4f0b4d2
+
+### Miscellaneous Chores
+
+* **⚙️:** ✏️ update template identifier for MR review b4766ae
+* 🗑️ remove old commitlint configuration files a786cf5
+* **deps:** 🔗 bump AzureRM provider version to v4.31+ 1ea5211
+* **deps:** update dependency claranet/diagnostic-settings/azurerm to ~> 8.1.0 c2d1d12
+* **deps:** update dependency opentofu to v1.10.0 0666e84
+* **deps:** update dependency opentofu to v1.10.1 ab39d52
+* **deps:** update dependency opentofu to v1.10.3 b541ecf
+* **deps:** update dependency opentofu to v1.10.6 b51365a
+* **deps:** update dependency opentofu to v1.9.1 4e3e7c0
+* **deps:** update dependency pre-commit to v4.2.0 3440702
+* **deps:** update dependency terraform-docs to v0.20.0 57daa93
+* **deps:** update dependency tflint to v0.57.0 b0e74b7
+* **deps:** update dependency tflint to v0.58.0 01dfacf
+* **deps:** update dependency tflint to v0.58.1 312d67d
+* **deps:** update dependency tflint to v0.59.1 108af80
+* **deps:** update dependency trivy to v0.59.1 02efb08
+* **deps:** update dependency trivy to v0.60.0 371965a
+* **deps:** update dependency trivy to v0.61.1 812c1ad
+* **deps:** update dependency trivy to v0.62.0 92e00ef
+* **deps:** update dependency trivy to v0.62.1 7209af7
+* **deps:** update dependency trivy to v0.63.0 adb56e1
+* **deps:** update dependency trivy to v0.66.0 3b23e4b
+* **deps:** update dependency trivy to v0.67.0 8ba56df
+* **deps:** update pre-commit hook alessandrojcm/commitlint-pre-commit-hook to v9.21.0 d35810c
+* **deps:** update pre-commit hook alessandrojcm/commitlint-pre-commit-hook to v9.22.0 9d55a8f
+* **deps:** update pre-commit hook pre-commit/pre-commit-hooks to v6 fdb670b
+* **deps:** update pre-commit hook tofuutils/pre-commit-opentofu to v2.2.0 5c37a4d
+* **deps:** update pre-commit hook tofuutils/pre-commit-opentofu to v2.2.1 e524fa5
+* **deps:** update terraform claranet/diagnostic-settings/azurerm to ~> 8.2.0 e267097
+* **deps:** update terraform claranet/subnet/azurerm to ~> 8.1.0 6dd3468
+* **deps:** update tools daa5953
+* **deps:** update tools ca5eb94
+* **deps:** update tools 8b3229f
+* **deps:** update tools 71fbf14
+* **deps:** update tools d554cc1
+* update Github templates dcf561b
+
 ## 8.0.0 (2025-01-29)
 
 ### ⚠ BREAKING CHANGES
