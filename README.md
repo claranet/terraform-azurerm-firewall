@@ -133,21 +133,21 @@ module "firewall" {
 ## Providers
 
 | Name | Version |
-|------|---------|
+| ---- | ------- |
 | azurecaf | >= 1.2.28 |
 | azurerm | ~> 4.31 |
 
 ## Modules
 
 | Name | Source | Version |
-|------|--------|---------|
+| ---- | ------ | ------- |
 | diagnostics | claranet/diagnostic-settings/azurerm | ~> 8.2.0 |
 | firewall\_subnet | claranet/subnet/azurerm | ~> 8.1.0 |
 
 ## Resources
 
 | Name | Type |
-|------|------|
+| ---- | ---- |
 | [azurerm_firewall.main](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/firewall) | resource |
 | [azurerm_firewall_application_rule_collection.main](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/firewall_application_rule_collection) | resource |
 | [azurerm_firewall_nat_rule_collection.main](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/firewall_nat_rule_collection) | resource |
@@ -160,7 +160,7 @@ module "firewall" {
 ## Inputs
 
 | Name | Description | Type | Default | Required |
-|------|-------------|------|---------|:--------:|
+| ---- | ----------- | ---- | ------- | :------: |
 | additional\_public\_ips | List of additional public ips' ids to attach to the firewall. | <pre>list(object({<br/>    name                 = string,<br/>    public_ip_address_id = string<br/>  }))</pre> | `[]` | no |
 | application\_rule\_collections | Create an application rule collection. | <pre>list(object({<br/>    name     = string,<br/>    priority = number,<br/>    action   = string,<br/>    rules = list(object({<br/>      name             = string,<br/>      source_addresses = list(string),<br/>      source_ip_groups = list(string),<br/>      target_fqdns     = list(string),<br/>      protocols = list(object({<br/>        port = string,<br/>        type = string<br/>      }))<br/>    }))<br/>  }))</pre> | `null` | no |
 | client\_name | Client name/account used in naming. | `string` | n/a | yes |
@@ -197,7 +197,7 @@ module "firewall" {
 ## Outputs
 
 | Name | Description |
-|------|-------------|
+| ---- | ----------- |
 | diagnostic\_settings | Diagnostic settings module object. |
 | id | Firewall generated ID. |
 | module\_subnet | Subnet module object. |
